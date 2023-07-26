@@ -5,39 +5,35 @@
 
 	import { AutoColliders, Collider, Debug, World } from '@threlte/rapier';
 	import { DoubleSide } from 'three';
-	import Player from './Player.svelte';
-	import Level from './models/Level.svelte';
+	import Player from './player/Player.svelte';
 </script>
 
-<T.PerspectiveCamera makeDefault position={[-30, 30, 30]} fov={60}>
+<T.PerspectiveCamera makeDefault position={[-30, 30, 30]} fov={60} near={0.0001}>
 	<!-- <OrbitControls enableZoom={true} target.y={1.5} /> -->
 </T.PerspectiveCamera>
 
 <T.DirectionalLight intensity={0.8} position.x={5} position.y={10} />
 <T.AmbientLight intensity={0.2} />
 
-<!-- <Grid
-	position.y={-0.001}
-	cellColor="#ffffff"
+<Grid
+	position.y={0.13}
+	cellColor="#ff0000"
 	sectionColor="#ffffff"
 	sectionThickness={0}
-	fadeDistance={200}
-	cellSize={2}
-/> -->
+	fadeDistance={40}
+	cellSize={1}
+	gridSize={[200, 200]}
+/>
 
 <World>
 	<Player />
 
-	<!-- <AutoColliders>
+	<AutoColliders>
 		<T.Mesh>
-			<T.BoxGeometry args={[100, 0.5, 100]} />
-			<T.MeshStandardMaterial color="grey" wireframe />
+			<T.BoxGeometry args={[100, 0.2, 100]} />
+			<T.MeshStandardMaterial color="#45aa44" wireframe />
 		</T.Mesh>
-	</AutoColliders> -->
-
-	<T.Group position.x={25} position.z={25}>
-		<Level />
-	</T.Group>
+	</AutoColliders>
 
 	{#if true}
 		<Debug depthTest={true} depthWrite={true} side={DoubleSide} />

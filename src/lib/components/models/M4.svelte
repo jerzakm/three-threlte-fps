@@ -9,7 +9,7 @@ Title: M4A1 With Hands And Animations
 
 <script lang="ts">
 	import type * as THREE from 'three';
-	import { Group } from 'three';
+	import { Group, LoopOnce } from 'three';
 	import { T, type Props, type Events, type Slots, forwardEventHandlers } from '@threlte/core';
 	import { useGltf, useGltfAnimations } from '@threlte/extras';
 
@@ -69,20 +69,34 @@ Title: M4A1 With Hands And Animations
 	export const { actions, mixer } = useGltfAnimations<ActionName>(gltf, ref);
 
 	const component = forwardEventHandlers();
+
+	let scale = 0.01;
+	$: $actions['h2_skeleton|idle']?.play();
+
+	// $: {
+	// 	setTimeout(() => {
+	// 		if ($actions) {
+	// 			scale = 0.01;
+	// 			$actions['h2_skeleton|draw']?.setLoop(LoopOnce, 0).play();
+	// 			$actions['h2_skeleton|idle']?.play();
+	// 		}
+	// 	}, 2000);
+	// }
 </script>
 
 <T is={ref} dispose={false} {...$$restProps} bind:this={$component}>
 	{#await gltf}
 		<slot name="fallback" />
 	{:then gltf}
-		<T.Group name="Sketchfab_Scene">
-			<T.Group name="Sketchfab_model" rotation={[-Math.PI / 2, 0, 0]}>
+		<T.Group name="Sketchfab_Scene" frustumCulled={false}>
+			<T.Group name="Sketchfab_model" rotation={[-Math.PI / 2, 0, 0]} frustumCulled={false}>
 				<T.Group
 					name="ab25487b58b043d09a956bcac5cbf842fbx"
 					rotation={[Math.PI / 2, 0, 0]}
-					scale={0.01}
+					{scale}
+					frustumCulled={false}
 				>
-					<T.Group name="Object_2">
+					<T.Group name="Object_2" frustumCulled={false}>
 						<T.Group name="RootNode">
 							<T.Group name="h2" rotation={[-Math.PI / 2, 0, 0]} scale={100} />
 							<T.Group name="m4a1" rotation={[-Math.PI / 2, 0, 0]} scale={100} />
@@ -96,72 +110,84 @@ Title: M4A1 With Hands And Animations
 										geometry={gltf.nodes.Object_10.geometry}
 										material={gltf.materials.sleeve_col}
 										skeleton={gltf.nodes.Object_10.skeleton}
+										frustumCulled={false}
 									/>
 									<T.SkinnedMesh
 										name="Object_11"
 										geometry={gltf.nodes.Object_11.geometry}
 										material={gltf.materials.glove_col}
 										skeleton={gltf.nodes.Object_11.skeleton}
+										frustumCulled={false}
 									/>
 									<T.SkinnedMesh
 										name="Object_12"
 										geometry={gltf.nodes.Object_12.geometry}
 										material={gltf.materials.alpha_col}
 										skeleton={gltf.nodes.Object_12.skeleton}
+										frustumCulled={false}
 									/>
 									<T.SkinnedMesh
 										name="Object_13"
 										geometry={gltf.nodes.Object_13.geometry}
 										material={gltf.materials.digit_anim}
 										skeleton={gltf.nodes.Object_13.skeleton}
+										frustumCulled={false}
 									/>
 									<T.SkinnedMesh
 										name="Object_15"
 										geometry={gltf.nodes.Object_15.geometry}
 										material={gltf.materials.lense_col}
 										skeleton={gltf.nodes.Object_15.skeleton}
+										frustumCulled={false}
 									/>
 									<T.SkinnedMesh
 										name="Object_16"
 										geometry={gltf.nodes.Object_16.geometry}
 										material={gltf.materials.eotech_col}
 										skeleton={gltf.nodes.Object_16.skeleton}
+										frustumCulled={false}
 									/>
 									<T.SkinnedMesh
 										name="Object_17"
 										geometry={gltf.nodes.Object_17.geometry}
 										material={gltf.materials.magnifier_col}
 										skeleton={gltf.nodes.Object_17.skeleton}
+										frustumCulled={false}
 									/>
 									<T.SkinnedMesh
 										name="Object_18"
 										geometry={gltf.nodes.Object_18.geometry}
 										material={gltf.materials.lens_col}
 										skeleton={gltf.nodes.Object_18.skeleton}
+										frustumCulled={false}
 									/>
 									<T.SkinnedMesh
 										name="Object_19"
 										geometry={gltf.nodes.Object_19.geometry}
 										material={gltf.materials.m4_col}
 										skeleton={gltf.nodes.Object_19.skeleton}
+										frustumCulled={false}
 									/>
 									<T.SkinnedMesh
 										name="Object_20"
 										geometry={gltf.nodes.Object_20.geometry}
 										material={gltf.materials.sm_col}
 										skeleton={gltf.nodes.Object_20.skeleton}
+										frustumCulled={false}
 									/>
 									<T.SkinnedMesh
 										name="Object_21"
 										geometry={gltf.nodes.Object_21.geometry}
 										material={gltf.materials.foregrip_col}
 										skeleton={gltf.nodes.Object_21.skeleton}
+										frustumCulled={false}
 									/>
 									<T.SkinnedMesh
 										name="Object_22"
 										geometry={gltf.nodes.Object_22.geometry}
 										material={gltf.materials.suppressor_col}
 										skeleton={gltf.nodes.Object_22.skeleton}
+										frustumCulled={false}
 									/>
 								</T.Group>
 							</T.Group>

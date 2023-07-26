@@ -10,6 +10,9 @@
 	import { Euler } from 'three';
 	const { w, a, s, d, shift, space } = useKeyboardControls();
 
+	const RUN_SPEED = 2;
+	const WALK_SPEED = 1;
+
 	function clamp(number: number, min: number, max: number) {
 		return Math.max(min, Math.min(number, max));
 	}
@@ -24,6 +27,24 @@
 	characterController.setMinSlopeSlideAngle((30 * Math.PI) / 180);
 	characterController.enableAutostep(0.5, 0.2, true);
 	characterController.enableSnapToGround(0.5);
+
+	let headBobActive = false;
+	let headBobTimer = 0;
+	let headBobSpeed = 1;
+	let headBobHeight = 0;
+
+	const updateHeadBob = (timeElapsedS: number) => {
+		if (headBobActive) {
+			headBobTimer = timeElapsedS;
+			// const wavelength = Math.PI;
+			// const nextStep = 1 + Math.floor(((headBobTimer + 0.000001) * headBobSpeed) / wavelength);
+			// const nextStepTime = (nextStep * wavelength) / headBobSpeed;
+			// headBobTimer = Math.min(headBobTimer + timeElapsedS, nextStepTime);
+			// if (headBobTimer == nextStepTime) {
+			// 	// headBobActive = false;
+			// }
+		}
+	};
 
 	let cameraRotation = new Euler();
 	let cameraQuaternion;
@@ -58,8 +79,13 @@
 	let phi = 0;
 	let theta = 0;
 
+	let gunphi = 0;
+	let guntheta = 0;
+
 	renderer?.domElement.addEventListener('click', async () => {
-		const g = requestPointerLockWithUnadjustedMovement(renderer?.domElement);
+		if (!pointerLocked) {
+			requestPointerLockWithUnadjustedMovement(renderer?.domElement);
+		}
 		// const y = renderer?.domElement.requestPointerLock();
 	});
 
@@ -73,10 +99,12 @@
 
 	const { camera } = useThrelte();
 
-	useFrame(() => {
+	useFrame(({ clock }) => {
 		if (!$camera) return;
 		phi += mouseMove.x * mouseSensitivity;
 		theta = clamp(theta - mouseMove.y * mouseSensitivity, -Math.PI / 3, Math.PI / 3);
+		gunphi = phi * 1;
+		guntheta = theta * 1;
 		const qx = new Quaternion();
 		qx.setFromAxisAngle(new Vector3(0, -1, 0), phi);
 
@@ -94,14 +122,14 @@
 
 		cameraRotation.setFromQuaternion($camera.quaternion);
 		if ($w || $a || $s || $d) {
-			let speed = 3;
+			let speed = 0.05;
 
 			let strafe = 0;
 			let forward = 0;
 
 			if ($shift) {
-				speed = 7;
-			} else speed = 3;
+				speed = RUN_SPEED;
+			} else speed = WALK_SPEED;
 
 			if ($w) {
 				forward -= speed;
@@ -118,6 +146,8 @@
 				strafe += speed;
 			}
 
+			if (strafe != 0 || forward != 0) headBobActive = true;
+
 			const direction = new Vector3(strafe, 0, forward);
 
 			direction.applyEuler(cameraRotation);
@@ -133,11 +163,15 @@
 
 		const translation = playerBody.translation();
 
-		$camera.position.set(translation.x, translation.y, translation.z);
+		updateHeadBob(clock.getElapsedTime());
+
+		$camera.position.set(translation.x, translation.y + 1, translation.z);
+
+		// $camera.position.y += Math.sin(headBobTimer * headBobSpeed) * headBobHeight;
 	});
 </script>
 
-<T.Group position={[-4, 0.5, -6]}>
+<T.Group position={[0, 0.5, 0]}>
 	<RigidBody bind:rigidBody={playerBody} linearDamping={0} gravityScale={1}>
 		<T.Mesh>
 			<T.CylinderGeometry args={[0.2, 0.2, 0.8]} />
@@ -147,4 +181,4 @@
 	</RigidBody>
 </T.Group>
 
-<!-- <Gun {cameraRotation} /> -->
+<Gun {cameraRotation} phi={gunphi} theta={guntheta} />
