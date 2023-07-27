@@ -8,9 +8,16 @@ Title: M4A1 With Hands And Animations
 -->
 
 <script lang="ts">
-	import type * as THREE from 'three';
-	import { Group, LoopOnce } from 'three';
-	import { T, type Props, type Events, type Slots, forwardEventHandlers } from '@threlte/core';
+	import * as THREE from 'three';
+	import { DoubleSide, Group } from 'three';
+	import {
+		T,
+		type Props,
+		type Events,
+		type Slots,
+		forwardEventHandlers,
+		useFrame
+	} from '@threlte/core';
 	import { useGltf, useGltfAnimations } from '@threlte/extras';
 
 	type $$Props = Props<THREE.Group>;
@@ -73,15 +80,35 @@ Title: M4A1 With Hands And Animations
 	let scale = 0.01;
 	$: $actions['h2_skeleton|idle']?.play();
 
-	// $: {
-	// 	setTimeout(() => {
-	// 		if ($actions) {
-	// 			scale = 0.01;
-	// 			$actions['h2_skeleton|draw']?.setLoop(LoopOnce, 0).play();
-	// 			$actions['h2_skeleton|idle']?.play();
-	// 		}
-	// 	}, 2000);
-	// }
+	const cg = new THREE.SphereGeometry(0.5, 5, 5);
+	const cm = new THREE.MeshStandardMaterial({ color: 'red', wireframe: true });
+
+	const start = new THREE.Mesh(cg, cm);
+	const end = new THREE.Mesh(cg, cm);
+
+	let gunRef: any;
+
+	$: {
+		if (gunRef) {
+			const bone = gunRef.skeleton.getBoneByName('tag_weapon_04');
+
+			const zOffset = 2.6;
+			start.position.x = 25;
+			start.position.z = zOffset;
+			end.position.x = 4;
+			end.position.z = zOffset;
+
+			bone.add(start);
+			bone.add(end);
+		}
+	}
+
+	export let startPosition = new THREE.Vector3();
+	export let endPosition = new THREE.Vector3();
+	useFrame(() => {
+		start.getWorldPosition(startPosition);
+		end.getWorldPosition(endPosition);
+	});
 </script>
 
 <T is={ref} dispose={false} {...$$restProps} bind:this={$component}>
@@ -105,22 +132,26 @@ Title: M4A1 With Hands And Animations
 									<T is={gltf.nodes._rootJoint} />
 									<T.Group name="Object_9" rotation={[-Math.PI / 2, 0, 0]} scale={100} />
 									<T.Group name="Object_14" rotation={[-Math.PI / 2, 0, 0]} scale={100} />
+									<!-- <T.Mesh position={[-3, -23, -3.3]}>
+										<T.BoxGeometry args={[0.5, 25, 0.5]} />
+										<T.MeshBasicMaterial color="yellow" side={DoubleSide} />
+									</T.Mesh> -->
 									<T.SkinnedMesh
-										name="Object_10"
+										name="Arms"
 										geometry={gltf.nodes.Object_10.geometry}
 										material={gltf.materials.sleeve_col}
 										skeleton={gltf.nodes.Object_10.skeleton}
 										frustumCulled={false}
 									/>
 									<T.SkinnedMesh
-										name="Object_11"
+										name="Hands"
 										geometry={gltf.nodes.Object_11.geometry}
 										material={gltf.materials.glove_col}
 										skeleton={gltf.nodes.Object_11.skeleton}
 										frustumCulled={false}
 									/>
 									<T.SkinnedMesh
-										name="Object_12"
+										name="Watch"
 										geometry={gltf.nodes.Object_12.geometry}
 										material={gltf.materials.alpha_col}
 										skeleton={gltf.nodes.Object_12.skeleton}
@@ -141,35 +172,36 @@ Title: M4A1 With Hands And Animations
 										frustumCulled={false}
 									/>
 									<T.SkinnedMesh
-										name="Object_16"
+										name="holo"
 										geometry={gltf.nodes.Object_16.geometry}
 										material={gltf.materials.eotech_col}
 										skeleton={gltf.nodes.Object_16.skeleton}
 										frustumCulled={false}
 									/>
 									<T.SkinnedMesh
-										name="Object_17"
+										name="scope_2x"
 										geometry={gltf.nodes.Object_17.geometry}
 										material={gltf.materials.magnifier_col}
 										skeleton={gltf.nodes.Object_17.skeleton}
 										frustumCulled={false}
 									/>
 									<T.SkinnedMesh
-										name="Object_18"
+										name="viewer_2x"
 										geometry={gltf.nodes.Object_18.geometry}
 										material={gltf.materials.lens_col}
 										skeleton={gltf.nodes.Object_18.skeleton}
 										frustumCulled={false}
 									/>
 									<T.SkinnedMesh
-										name="Object_19"
+										name="gun"
 										geometry={gltf.nodes.Object_19.geometry}
 										material={gltf.materials.m4_col}
 										skeleton={gltf.nodes.Object_19.skeleton}
 										frustumCulled={false}
+										bind:ref={gunRef}
 									/>
 									<T.SkinnedMesh
-										name="Object_20"
+										name="charging_handle"
 										geometry={gltf.nodes.Object_20.geometry}
 										material={gltf.materials.sm_col}
 										skeleton={gltf.nodes.Object_20.skeleton}
@@ -182,13 +214,13 @@ Title: M4A1 With Hands And Animations
 										skeleton={gltf.nodes.Object_21.skeleton}
 										frustumCulled={false}
 									/>
-									<T.SkinnedMesh
-										name="Object_22"
+									<!-- <T.SkinnedMesh
+										name="Silencer"
 										geometry={gltf.nodes.Object_22.geometry}
 										material={gltf.materials.suppressor_col}
 										skeleton={gltf.nodes.Object_22.skeleton}
 										frustumCulled={false}
-									/>
+									/> -->
 								</T.Group>
 							</T.Group>
 						</T.Group>
