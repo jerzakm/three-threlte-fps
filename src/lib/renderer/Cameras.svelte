@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { playerStores } from '$lib/player/playerStores';
 	import { T } from '@threlte/core';
 	import { AudioListener } from '@threlte/extras';
 	import type { PerspectiveCamera } from 'three';

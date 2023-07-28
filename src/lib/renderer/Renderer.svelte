@@ -1,9 +1,26 @@
 <script lang="ts">
-	import { useRender } from '@threlte/core';
+	import { useRender, useThrelte } from '@threlte/core';
 	import { onMount } from 'svelte';
 	import { rendererStores } from './rendererStores';
+	import { requestPointerLockWithUnadjustedMovement } from '$lib/util/pointerLock';
 
+	let pointerLocked = false;
 	const { activeCamera, eyesCamera, debugCamera, sightsCamera } = rendererStores;
+	const { renderer } = useThrelte();
+	renderer?.domElement.addEventListener('click', async () => {
+		if (!pointerLocked) {
+			requestPointerLockWithUnadjustedMovement(renderer?.domElement);
+		}
+		// const y = renderer?.domElement.requestPointerLock();
+	});
+
+	document.addEventListener(
+		'pointerlockchange',
+		(e) => {
+			pointerLocked = !pointerLocked;
+		},
+		false
+	);
 
 	onMount(() => {
 		activeCamera.set('sights');

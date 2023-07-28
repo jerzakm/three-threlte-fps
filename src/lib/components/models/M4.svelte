@@ -9,7 +9,7 @@ Title: M4A1 With Hands And Animations
 
 <script lang="ts">
 	import * as THREE from 'three';
-	import { DoubleSide, Group } from 'three';
+	import { Group } from 'three';
 	import {
 		T,
 		type Props,
@@ -21,7 +21,8 @@ Title: M4A1 With Hands And Animations
 	import { useGltf, useGltfAnimations } from '@threlte/extras';
 	import { rendererStores } from '$lib/renderer/rendererStores';
 	import { tweened } from 'svelte/motion';
-	import { quadInOut } from 'svelte/easing';
+	import { quadInOut, quadOut } from 'svelte/easing';
+	import { cameraStores } from '$lib/renderer/cameraStores';
 
 	type $$Props = Props<THREE.Group> & {
 		startPosition: THREE.Vector3;
@@ -141,7 +142,8 @@ Title: M4A1 With Hands And Animations
 	let sightsStart = new THREE.Vector3();
 	let sightsEnd = new THREE.Vector3();
 
-	const { sightsCamera, activeCamera, eyesCamera, eyesPosition, eyesQuat } = rendererStores;
+	const { sightsCamera, activeCamera, eyesCamera } = rendererStores;
+	const { eyesPosition, eyesQuat } = cameraStores;
 
 	const sightsRotationHelper = new THREE.Mesh();
 	const sightsQuat = new THREE.Quaternion();
@@ -153,19 +155,16 @@ Title: M4A1 With Hands And Animations
 	let y = 0;
 	let z = 0;
 
-	$: console.log($activeCamera);
-
 	let lastTime = 0;
 
 	const time = tweened(0);
 
 	$: {
-		console.log($activeCamera);
 		time.set(0, { duration: 0 });
 		if ($activeCamera === 'eyes') {
 			time.set(1, {
-				easing: quadInOut,
-				duration: 1000
+				easing: quadOut,
+				duration: 560
 			});
 		}
 
@@ -192,8 +191,6 @@ Title: M4A1 With Hands And Animations
 
 		const positionSpeed = delta * 100 * $time;
 		const quatSpeed = delta * 300 * $time;
-
-		console.log(positionSpeed);
 
 		if ($activeCamera === 'eyes') {
 			currentCameraPosition.lerp($eyesPosition, positionSpeed);

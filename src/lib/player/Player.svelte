@@ -8,6 +8,7 @@
 	import { useKeyboardControls } from 'svelte-kbc';
 	import { Quaternion, Vector3 } from 'three';
 	import { rendererStores } from '$lib/renderer/rendererStores';
+	import { cameraStores } from '$lib/renderer/cameraStores';
 
 	const { w, a, s, d, shift, space } = useKeyboardControls();
 
@@ -44,15 +45,9 @@
 
 	const mouseSensitivity = 0.002;
 
-	const { renderer } = useThrelte();
-
-	let pointerLocked = false;
-
 	window.addEventListener('mousemove', (e) => {
-		if (pointerLocked) {
-			mouseMove.x += e.movementX;
-			mouseMove.y += e.movementY;
-		}
+		mouseMove.x += e.movementX;
+		mouseMove.y += e.movementY;
 	});
 
 	let phi = 0;
@@ -61,22 +56,8 @@
 	let gunphi = 0;
 	let guntheta = 0;
 
-	renderer?.domElement.addEventListener('click', async () => {
-		if (!pointerLocked) {
-			requestPointerLockWithUnadjustedMovement(renderer?.domElement);
-		}
-		// const y = renderer?.domElement.requestPointerLock();
-	});
-
-	document.addEventListener(
-		'pointerlockchange',
-		(e) => {
-			pointerLocked = !pointerLocked;
-		},
-		false
-	);
-
-	const { eyesCamera, eyesPosition, eyesQuat } = rendererStores;
+	const { eyesCamera } = rendererStores;
+	const { eyesPosition, eyesQuat } = cameraStores;
 
 	let isAds = false;
 
