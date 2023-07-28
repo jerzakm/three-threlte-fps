@@ -179,13 +179,13 @@ Title: M4A1 With Hands And Animations
 										skeleton={gltf.nodes.Object_13.skeleton}
 										frustumCulled={false}
 									/>
-									<T.SkinnedMesh
-										name="Object_15"
+									<!-- <T.SkinnedMesh
+										name="viewer_holo"
 										geometry={gltf.nodes.Object_15.geometry}
 										material={gltf.materials.lense_col}
 										skeleton={gltf.nodes.Object_15.skeleton}
 										frustumCulled={false}
-									/>
+									/> -->
 									<T.SkinnedMesh
 										name="holo"
 										geometry={gltf.nodes.Object_16.geometry}
@@ -193,7 +193,7 @@ Title: M4A1 With Hands And Animations
 										skeleton={gltf.nodes.Object_16.skeleton}
 										frustumCulled={false}
 									/>
-									<T.SkinnedMesh
+									<!-- <T.SkinnedMesh
 										name="scope_2x"
 										geometry={gltf.nodes.Object_17.geometry}
 										material={gltf.materials.magnifier_col}
@@ -206,7 +206,7 @@ Title: M4A1 With Hands And Animations
 										material={gltf.materials.lens_col}
 										skeleton={gltf.nodes.Object_18.skeleton}
 										frustumCulled={false}
-									/>
+									/> -->
 									<T.SkinnedMesh
 										name="gun"
 										geometry={gltf.nodes.Object_19.geometry}

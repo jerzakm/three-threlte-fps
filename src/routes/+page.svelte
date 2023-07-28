@@ -1,5 +1,5 @@
 <script lang="ts">
-	import App from '$lib/components/App.svelte';
+	import App from '$lib/App.svelte';
 
 	let started = false;
 </script>

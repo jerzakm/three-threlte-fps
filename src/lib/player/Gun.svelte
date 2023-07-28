@@ -6,8 +6,7 @@
 
 	import { T, useFrame, useThrelte } from '@threlte/core';
 	import { useRapier } from '@threlte/rapier';
-	import { Howl } from 'howler';
-	import { onMount } from 'svelte';
+
 	import { Quaternion, Vector3, type Euler, type Group } from 'three';
 	import { DEG2RAD } from 'three/src/math/MathUtils';
 
@@ -17,6 +16,7 @@
 
 	//https://www.youtube.com/watch?v=zc_8QMltpnU&ab_channel=Ish%27sTacticalSolutions
 	// https://www.youtube.com/watch?v=DuS9XnY-IRA&ab_channel=ColionNoir
+	let adsing = false;
 
 	let x = 0;
 	let y = 0;
@@ -38,6 +38,9 @@
 		// x+=1
 		y = $camera.position.y;
 		z = $camera.position.z;
+		// x = $camera.position.x - 0.06;
+		// y = $camera.position.y + 0.01;
+		// z = $camera.position.z + 0.08;
 		// z-=2.5
 		const time = clock.getElapsedTime();
 		const delta = time - lastTime;
@@ -102,15 +105,6 @@
 		}
 	});
 
-	onMount(() => {
-		sound = new Howl({
-			src: ['/audio/m4shot.wav'],
-			autoplay: false,
-			loop: false,
-			volume: 0.1
-		});
-	});
-
 	let shooting = false;
 
 	let audio1: any;
@@ -167,9 +161,6 @@
 		}, 200);
 	};
 
-	$: console.log(barrelStart);
-	$: console.log(barrelEnd);
-
 	const handleClick = (e: MouseEvent) => {
 		if (e.button === 0) {
 			if (barrelStart && barrelEnd) {
@@ -179,6 +170,7 @@
 
 		if (e.button === 2) {
 			//optics
+			adsing = !adsing;
 		}
 	};
 

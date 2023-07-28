@@ -79,6 +79,8 @@
 
 	const { camera } = useThrelte();
 
+	let isAds = false;
+
 	useFrame(({ clock }) => {
 		if (!$camera) return;
 		phi += mouseMove.x * mouseSensitivity;
@@ -141,7 +143,7 @@
 
 		const translation = playerBody.translation();
 
-		$camera.position.set(translation.x, translation.y + 1, translation.z);
+		$camera.position.set(translation.x, translation.y + 1.3, translation.z);
 	});
 </script>
 
@@ -155,4 +157,4 @@
 	</RigidBody>
 </T.Group>
 
-<Gun phi={gunphi} theta={guntheta} />
+<Gun phi={gunphi} theta={guntheta} bind:adsing={isAds} />

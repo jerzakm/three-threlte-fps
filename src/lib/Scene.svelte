@@ -6,8 +6,8 @@
 
 	import { AutoColliders, Collider, Debug, World } from '@threlte/rapier';
 	import { DoubleSide } from 'three';
-	import Player from './player/Player.svelte';
-	import Wall from './models/Wall.svelte';
+	import Player from '$lib/player/Player.svelte';
+	import Wall from '$lib/components/models/Wall.svelte';
 </script>
 
 <T.PerspectiveCamera makeDefault position={[-30, 30, 30]} fov={60} near={0.0001}>
