@@ -20,11 +20,16 @@ Title: M4A1 With Hands And Animations
 	} from '@threlte/core';
 	import { useGltf, useGltfAnimations } from '@threlte/extras';
 
-	type $$Props = Props<THREE.Group>;
+	type $$Props = Props<THREE.Group> & {
+		startPosition: THREE.Vector3;
+		endPosition: THREE.Vector3;
+		shooting: boolean;
+	};
 	type $$Events = Events<THREE.Group>;
 	type $$Slots = Slots<THREE.Group> & { fallback: {}; error: { error: any } };
 
 	export const ref = new Group();
+	export let shooting = false;
 
 	type ActionName =
 		| 'h2_skeleton|draw'
@@ -80,7 +85,7 @@ Title: M4A1 With Hands And Animations
 	let scale = 0.01;
 	$: $actions['h2_skeleton|idle']?.play();
 
-	const cg = new THREE.SphereGeometry(0.5, 5, 5);
+	const cg = new THREE.SphereGeometry(0.1, 5, 5);
 	const cm = new THREE.MeshStandardMaterial({ color: 'red', wireframe: true });
 
 	const start = new THREE.Mesh(cg, cm);
@@ -103,8 +108,21 @@ Title: M4A1 With Hands And Animations
 		}
 	}
 
+	const shootAnimation = (shooting: boolean) => {
+		console.log({ shooting });
+		if (shooting) {
+			$actions['h2_skeleton|fire1']?.reset();
+			$actions['h2_skeleton|fire1']?.setLoop(THREE.LoopRepeat, 1).play();
+		} else {
+			$actions['h2_skeleton|idle']?.play();
+		}
+	};
+
+	$: shootAnimation(shooting);
+
 	export let startPosition = new THREE.Vector3();
 	export let endPosition = new THREE.Vector3();
+
 	useFrame(() => {
 		start.getWorldPosition(startPosition);
 		end.getWorldPosition(endPosition);
@@ -132,10 +150,7 @@ Title: M4A1 With Hands And Animations
 									<T is={gltf.nodes._rootJoint} />
 									<T.Group name="Object_9" rotation={[-Math.PI / 2, 0, 0]} scale={100} />
 									<T.Group name="Object_14" rotation={[-Math.PI / 2, 0, 0]} scale={100} />
-									<!-- <T.Mesh position={[-3, -23, -3.3]}>
-										<T.BoxGeometry args={[0.5, 25, 0.5]} />
-										<T.MeshBasicMaterial color="yellow" side={DoubleSide} />
-									</T.Mesh> -->
+
 									<T.SkinnedMesh
 										name="Arms"
 										geometry={gltf.nodes.Object_10.geometry}

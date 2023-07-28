@@ -1,5 +1,7 @@
 <script lang="ts">
 	import App from '$lib/components/App.svelte';
+
+	let started = false;
 </script>
 
 <div>

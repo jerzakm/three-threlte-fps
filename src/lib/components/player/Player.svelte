@@ -8,6 +8,7 @@
 	import { useKeyboardControls } from 'svelte-kbc';
 	import { Quaternion, Vector3 } from 'three';
 	import { Euler } from 'three';
+	import { PositionalAudio } from '@threlte/extras';
 	const { w, a, s, d, shift, space } = useKeyboardControls();
 
 	const RUN_SPEED = 2;
@@ -28,24 +29,6 @@
 	characterController.enableAutostep(0.5, 0.2, true);
 	characterController.enableSnapToGround(0.5);
 
-	let headBobActive = false;
-	let headBobTimer = 0;
-	let headBobSpeed = 1;
-	let headBobHeight = 0;
-
-	const updateHeadBob = (timeElapsedS: number) => {
-		if (headBobActive) {
-			headBobTimer = timeElapsedS;
-			// const wavelength = Math.PI;
-			// const nextStep = 1 + Math.floor(((headBobTimer + 0.000001) * headBobSpeed) / wavelength);
-			// const nextStepTime = (nextStep * wavelength) / headBobSpeed;
-			// headBobTimer = Math.min(headBobTimer + timeElapsedS, nextStepTime);
-			// if (headBobTimer == nextStepTime) {
-			// 	// headBobActive = false;
-			// }
-		}
-	};
-
 	let cameraRotation = new Euler();
 	let cameraQuaternion;
 
@@ -54,9 +37,6 @@
 			playerBody.lockRotations(true, true);
 		}
 	}
-
-	let lastMousePos = { x: 0, y: 0 };
-	let currentMousePos = { x: 0, y: 0 };
 
 	const mouseMove = {
 		x: 0,
@@ -146,11 +126,9 @@
 				strafe += speed;
 			}
 
-			if (strafe != 0 || forward != 0) headBobActive = true;
-
 			const direction = new Vector3(strafe, 0, forward);
 
-			direction.applyEuler(cameraRotation);
+			direction.applyQuaternion($camera.quaternion);
 
 			direction.setY(0);
 			characterController.computeColliderMovement(
@@ -163,11 +141,7 @@
 
 		const translation = playerBody.translation();
 
-		updateHeadBob(clock.getElapsedTime());
-
 		$camera.position.set(translation.x, translation.y + 1, translation.z);
-
-		// $camera.position.y += Math.sin(headBobTimer * headBobSpeed) * headBobHeight;
 	});
 </script>
 
@@ -181,4 +155,4 @@
 	</RigidBody>
 </T.Group>
 
-<Gun {cameraRotation} phi={gunphi} theta={guntheta} />
+<Gun phi={gunphi} theta={guntheta} />
