@@ -1,23 +1,11 @@
 <script lang="ts">
 	import { T } from '@threlte/core';
-	import { DEG2RAD } from 'three/src/math/MathUtils';
-	import { ContactShadows, Environment, Float, Grid, OrbitControls } from '@threlte/extras';
-	import { AudioListener, PositionalAudio } from '@threlte/extras';
+	import { Environment, Grid } from '@threlte/extras';
 
-	import { AutoColliders, Collider, Debug, World } from '@threlte/rapier';
-	import { DoubleSide } from 'three';
 	import Player from '$lib/player/Player.svelte';
-	import Wall from '$lib/components/models/Wall.svelte';
+	import { AutoColliders, Debug, World } from '@threlte/rapier';
+	import { DoubleSide } from 'three';
 </script>
-
-<T.PerspectiveCamera makeDefault position={[-30, 30, 30]} fov={60} near={0.0001}>
-	<!-- <OrbitControls enableZoom={true} target.y={1.5} /> -->
-	<AudioListener />
-</T.PerspectiveCamera>
-
-<!-- <T.DirectionalLight intensity={0.8} position.x={0} position.y={2} />
-<T.DirectionalLight intensity={0.8} position.x={0} position.y={2} position.z={-14} />
-<T.AmbientLight intensity={0.5} /> -->
 
 <Environment files={'spaichingen_hill_1k.hdr'} />
 

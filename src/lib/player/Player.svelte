@@ -8,7 +8,8 @@
 	import { useKeyboardControls } from 'svelte-kbc';
 	import { Quaternion, Vector3 } from 'three';
 	import { Euler } from 'three';
-	import { PositionalAudio } from '@threlte/extras';
+	import { rendererStores } from '$lib/renderer/rendererStores';
+
 	const { w, a, s, d, shift, space } = useKeyboardControls();
 
 	const RUN_SPEED = 2;
@@ -29,7 +30,6 @@
 	characterController.enableAutostep(0.5, 0.2, true);
 	characterController.enableSnapToGround(0.5);
 
-	let cameraRotation = new Euler();
 	let cameraQuaternion;
 
 	$: {
@@ -77,12 +77,12 @@
 		false
 	);
 
-	const { camera } = useThrelte();
+	const { eyesCamera } = rendererStores;
 
 	let isAds = false;
 
 	useFrame(({ clock }) => {
-		if (!$camera) return;
+		if (!$eyesCamera) return;
 		phi += mouseMove.x * mouseSensitivity;
 		theta = clamp(theta - mouseMove.y * mouseSensitivity, -Math.PI / 3, Math.PI / 3);
 		gunphi = phi * 1;
@@ -100,9 +100,8 @@
 		mouseMove.x = 0;
 		mouseMove.y = 0;
 
-		$camera.quaternion.copy(cameraQuaternion);
+		$eyesCamera.quaternion.copy(cameraQuaternion);
 
-		cameraRotation.setFromQuaternion($camera.quaternion);
 		if ($w || $a || $s || $d) {
 			let speed = 0.05;
 
@@ -130,7 +129,7 @@
 
 			const direction = new Vector3(strafe, 0, forward);
 
-			direction.applyQuaternion($camera.quaternion);
+			direction.applyQuaternion($eyesCamera.quaternion);
 
 			direction.setY(0);
 			characterController.computeColliderMovement(
@@ -143,7 +142,7 @@
 
 		const translation = playerBody.translation();
 
-		$camera.position.set(translation.x, translation.y + 1.3, translation.z);
+		$eyesCamera.position.set(translation.x, translation.y + 1.3, translation.z);
 	});
 </script>
 
@@ -157,4 +156,4 @@
 	</RigidBody>
 </T.Group>
 
-<Gun phi={gunphi} theta={guntheta} bind:adsing={isAds} />
+<Gun phi={gunphi} theta={guntheta} />

@@ -19,6 +19,7 @@ Title: M4A1 With Hands And Animations
 		useFrame
 	} from '@threlte/core';
 	import { useGltf, useGltfAnimations } from '@threlte/extras';
+	import { rendererStores } from '$lib/renderer/rendererStores';
 
 	type $$Props = Props<THREE.Group> & {
 		startPosition: THREE.Vector3;
@@ -86,10 +87,13 @@ Title: M4A1 With Hands And Animations
 	$: $actions['h2_skeleton|idle']?.play();
 
 	const cg = new THREE.SphereGeometry(0.1, 5, 5);
-	const cm = new THREE.MeshStandardMaterial({ color: 'red', wireframe: true });
+	const cm = new THREE.MeshBasicMaterial({ color: 'red', wireframe: false });
 
-	const start = new THREE.Mesh(cg, cm);
-	const end = new THREE.Mesh(cg, cm);
+	const bStartMesh = new THREE.Mesh(cg, cm);
+	const bEndMarker = new THREE.Mesh(cg, cm);
+
+	const sStartMarker = new THREE.Mesh(cg, cm);
+	const sEndMarker = new THREE.Mesh(cg, cm);
 
 	let gunRef: any;
 
@@ -97,22 +101,27 @@ Title: M4A1 With Hands And Animations
 		if (gunRef) {
 			const bone = gunRef.skeleton.getBoneByName('tag_weapon_04');
 
-			const zOffset = 2.6;
-			start.position.x = 25;
-			start.position.z = zOffset;
-			end.position.x = 4;
-			end.position.z = zOffset;
+			bStartMesh.position.x = 25;
+			bStartMesh.position.z = 2.6;
+			bEndMarker.position.x = 4;
+			bEndMarker.position.z = 2.6;
 
-			bone.add(start);
-			bone.add(end);
+			sEndMarker.position.x = 25;
+			sEndMarker.position.z = 5.5;
+			sStartMarker.position.x = -5;
+			sStartMarker.position.z = 5.5;
+
+			bone.add(bStartMesh);
+			bone.add(bEndMarker);
+			bone.add(sStartMarker);
+			bone.add(sEndMarker);
 		}
 	}
 
 	const shootAnimation = (shooting: boolean) => {
-		console.log({ shooting });
 		if (shooting) {
-			$actions['h2_skeleton|fire1']?.reset();
-			$actions['h2_skeleton|fire1']?.setLoop(THREE.LoopRepeat, 1).play();
+			$actions['h2_skeleton|fire11']?.reset();
+			$actions['h2_skeleton|fire11']?.setLoop(THREE.LoopRepeat, 1).play();
 		} else {
 			$actions['h2_skeleton|idle']?.play();
 		}
@@ -121,11 +130,22 @@ Title: M4A1 With Hands And Animations
 	$: shootAnimation(shooting);
 
 	export let startPosition = new THREE.Vector3();
+
 	export let endPosition = new THREE.Vector3();
 
+	let sightsStart = new THREE.Vector3();
+	let sightsEnd = new THREE.Vector3();
+
+	const { sightsCamera } = rendererStores;
+
 	useFrame(() => {
-		start.getWorldPosition(startPosition);
-		end.getWorldPosition(endPosition);
+		bStartMesh.getWorldPosition(startPosition);
+		bEndMarker.getWorldPosition(endPosition);
+		sStartMarker.getWorldPosition(sightsStart);
+		sEndMarker.getWorldPosition(sightsEnd);
+
+		$sightsCamera?.position.set(...sightsStart.toArray());
+		$sightsCamera?.lookAt(...sightsEnd.toArray());
 	});
 </script>
 

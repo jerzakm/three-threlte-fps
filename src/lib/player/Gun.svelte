@@ -9,8 +9,10 @@
 
 	import { Quaternion, Vector3, type Euler, type Group } from 'three';
 	import { DEG2RAD } from 'three/src/math/MathUtils';
+	import { rendererStores } from '$lib/renderer/rendererStores';
+	import { playerStores } from './playerStores';
 
-	const { camera } = useThrelte();
+	const { eyesCamera, activeCamera } = rendererStores;
 
 	let m4: Group;
 
@@ -34,10 +36,10 @@
 	// world.maxVelocityIterations = 32;
 
 	useFrame(({ clock }) => {
-		x = $camera.position.x;
+		x = $eyesCamera.position.x;
 		// x+=1
-		y = $camera.position.y;
-		z = $camera.position.z;
+		y = $eyesCamera.position.y;
+		z = $eyesCamera.position.z;
 		// x = $camera.position.x - 0.06;
 		// y = $camera.position.y + 0.01;
 		// z = $camera.position.z + 0.08;
@@ -124,17 +126,14 @@
 
 		shotsAudio[shotIndex].stop();
 
-		console.log(shotsAudio[shotIndex].parent.position);
-
 		shotsAudio[shotIndex].parent.position.x = barrelStart.x;
 		shotsAudio[shotIndex].parent.position.y = barrelStart.y;
 		shotsAudio[shotIndex].parent.position.z = barrelStart.z;
-		console.log(shotsAudio[shotIndex].parent.position);
 
 		// shotsAudio[shotIndex].position = barrelEnd;
 		shotsAudio[shotIndex].play();
 		shooting = true;
-		barrelDirection.subVectors(barrelStart, barrelEnd).multiplyScalar(900);
+		barrelDirection.subVectors(barrelStart, barrelEnd).multiplyScalar(1500);
 
 		const { x, y, z } = barrelStart;
 
@@ -170,19 +169,19 @@
 
 		if (e.button === 2) {
 			//optics
-			adsing = !adsing;
+			$activeCamera === 'eyes' ? activeCamera.set('sights') : activeCamera.set('eyes');
 		}
 	};
 
 	const directionalCone = {
-		coneInnerAngle: 50,
-		coneOuterAngle: 220,
+		coneInnerAngle: 360,
+		coneOuterAngle: 360,
 		coneOuterGain: 0.9
 	};
 
 	const impactDirectionalCone = {
-		coneInnerAngle: 50,
-		coneOuterAngle: 220,
+		coneInnerAngle: 360,
+		coneOuterAngle: 360,
 		coneOuterGain: 0.5
 	};
 
