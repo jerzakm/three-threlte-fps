@@ -18,7 +18,6 @@
 
 	//https://www.youtube.com/watch?v=zc_8QMltpnU&ab_channel=Ish%27sTacticalSolutions
 	// https://www.youtube.com/watch?v=DuS9XnY-IRA&ab_channel=ColionNoir
-	let adsing = false;
 
 	let x = 0;
 	let y = 0;
@@ -37,6 +36,8 @@
 
 	useFrame(({ clock }) => {
 		x = $eyesCamera.position.x;
+		console.log(x);
+
 		// x+=1
 		y = $eyesCamera.position.y;
 		z = $eyesCamera.position.z;
@@ -194,7 +195,7 @@
 
 <svelte:window on:click={handleClick} />
 
-<T.Group scale={0.02} position={[x, y, z]} rotation.y={-DEG2RAD * 180}>
+<T.Group position={[x, y, z]} rotation.y={-DEG2RAD * 180} scale={0.03}>
 	<M4 bind:ref={m4} bind:startPosition={barrelStart} bind:endPosition={barrelEnd} {shooting} />
 </T.Group>
 <T.Mesh>

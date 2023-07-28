@@ -103,8 +103,9 @@ Title: M4A1 With Hands And Animations
 
 	let gunRef: any;
 
+	let initialized = false;
 	$: {
-		if (gunRef) {
+		if (gunRef && !initialized) {
 			const bone = gunRef.skeleton.getBoneByName('tag_weapon_04');
 
 			bStartMesh.position.x = 25;
@@ -121,6 +122,7 @@ Title: M4A1 With Hands And Animations
 			bone.add(bEndMarker);
 			bone.add(sStartMarker);
 			bone.add(sEndMarker);
+			initialized = true;
 		}
 	}
 
@@ -136,45 +138,14 @@ Title: M4A1 With Hands And Animations
 	$: shootAnimation(shooting);
 
 	export let startPosition = new THREE.Vector3();
-
 	export let endPosition = new THREE.Vector3();
 
-	let sightsStart = new THREE.Vector3();
-	let sightsEnd = new THREE.Vector3();
+	const sightsStart = new THREE.Vector3();
+	const sightsEnd = new THREE.Vector3();
 
-	const { sightsCamera, activeCamera, eyesCamera } = rendererStores;
-	const { eyesPosition, eyesQuat } = cameraStores;
+	const { sightsQuat, sightsPosition } = cameraStores;
 
 	const sightsRotationHelper = new THREE.Mesh();
-	const sightsQuat = new THREE.Quaternion();
-
-	const currentCameraPosition = new THREE.Vector3().copy($eyesPosition);
-	const currentQuat = new THREE.Quaternion().copy($eyesQuat);
-
-	let x = 0;
-	let y = 0;
-	let z = 0;
-
-	let lastTime = 0;
-
-	const time = tweened(0);
-
-	$: {
-		time.set(0, { duration: 0 });
-		if ($activeCamera === 'eyes') {
-			time.set(1, {
-				easing: quadOut,
-				duration: 560
-			});
-		}
-
-		if ($activeCamera === 'sights') {
-			time.set(1, {
-				easing: quadInOut,
-				duration: 500
-			});
-		}
-	}
 
 	useFrame(({ clock }) => {
 		bStartMesh.getWorldPosition(startPosition);
@@ -185,37 +156,8 @@ Title: M4A1 With Hands And Animations
 		sightsRotationHelper?.position.set(...sightsEnd.toArray());
 		sightsRotationHelper.lookAt(...sightsStart.toArray());
 
-		let currentTime = clock.getElapsedTime();
-		const delta = currentTime - lastTime;
-		lastTime = currentTime;
-
-		const positionSpeed = delta * 100 * $time;
-		const quatSpeed = delta * 300 * $time;
-
-		if ($activeCamera === 'eyes') {
-			currentCameraPosition.lerp($eyesPosition, positionSpeed);
-
-			currentQuat.slerp($eyesQuat, quatSpeed);
-		}
-
-		if ($activeCamera === 'sights') {
-			currentCameraPosition.lerp(sightsStart, positionSpeed);
-			currentQuat.slerp(sightsQuat, quatSpeed);
-		}
-
-		// $sightsCamera?.position.set(...sightsStart.toArray());
-		// $sightsCamera?.lookAt(...sightsEnd.toArray());
-
-		sightsQuat.setFromEuler(sightsRotationHelper.rotation);
-
-		// $sightsCamera?.position.set(...sightsStart.toArray());
-		// $sightsCamera?.rotation.setFromQuaternion(sightsQuat);
-		$sightsCamera?.position.copy(currentCameraPosition);
-		$sightsCamera?.quaternion.copy(currentQuat);
-
-		x = currentCameraPosition.x;
-		y = currentCameraPosition.y;
-		x = currentCameraPosition.z;
+		$sightsPosition.copy(sightsStart);
+		$sightsQuat.setFromEuler(sightsRotationHelper.rotation);
 	});
 </script>
 

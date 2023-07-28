@@ -59,8 +59,6 @@
 	const { eyesCamera } = rendererStores;
 	const { eyesPosition, eyesQuat } = cameraStores;
 
-	let isAds = false;
-
 	useFrame(({ clock }) => {
 		if (!$eyesCamera) return;
 		phi += mouseMove.x * mouseSensitivity;
@@ -83,6 +81,8 @@
 		$eyesCamera.quaternion.copy(cameraQuaternion);
 		$eyesQuat.copy(cameraQuaternion);
 
+		let xOffset = 0;
+
 		if ($w || $a || $s || $d) {
 			let speed = 0.05;
 
@@ -102,7 +102,9 @@
 
 			if ($a) {
 				strafe -= speed;
+				xOffset = -0.03;
 			}
+			a;
 
 			if ($d) {
 				strafe += speed;
@@ -117,13 +119,13 @@
 				playerCollider, // The collider we would like to move.
 				{ x: 0, y: 0, z: 0 } // The movement we would like to apply if there wasn’t any obstacle.
 			);
-			let correctedMovement = characterController.computedMovement();
+			// let correctedMovement = characterController.computedMovement();
 			playerBody.setLinvel(direction, true);
 		}
 
 		const translation = playerBody.translation();
 
-		$eyesCamera.position.set(translation.x, translation.y + 1.3, translation.z);
+		$eyesCamera.position.set(translation.x, translation.y + 1.9, translation.z);
 
 		$eyesPosition.copy($eyesCamera.position);
 	});

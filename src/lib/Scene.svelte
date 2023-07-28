@@ -5,6 +5,14 @@
 	import Player from '$lib/player/Player.svelte';
 	import { AutoColliders, Debug, World } from '@threlte/rapier';
 	import { DoubleSide } from 'three';
+	import { onMount } from 'svelte';
+	import { rendererStores } from './renderer/rendererStores';
+
+	const { activeCamera } = rendererStores;
+
+	onMount(() => {
+		activeCamera.set('debug');
+	});
 </script>
 
 <Environment files={'spaichingen_hill_1k.hdr'} />

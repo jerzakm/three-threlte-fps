@@ -22,10 +22,6 @@
 		false
 	);
 
-	onMount(() => {
-		activeCamera.set('sights');
-	});
-
 	useRender(({ scene, renderer }) => {
 		//
 
