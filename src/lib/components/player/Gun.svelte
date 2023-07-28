@@ -140,7 +140,7 @@
 		// shotsAudio[shotIndex].position = barrelEnd;
 		shotsAudio[shotIndex].play();
 		shooting = true;
-		barrelDirection.subVectors(barrelStart, barrelEnd).multiplyScalar(500);
+		barrelDirection.subVectors(barrelStart, barrelEnd).multiplyScalar(900);
 
 		const { x, y, z } = barrelStart;
 
@@ -191,12 +191,12 @@
 	const impactDirectionalCone = {
 		coneInnerAngle: 50,
 		coneOuterAngle: 220,
-		coneOuterGain: 0.9
+		coneOuterGain: 0.5
 	};
 
-	const impactRolloff = 0.3;
+	const impactRolloff = 0.18;
 
-	const shotVolume = 2;
+	const shotVolume = 1.7;
 
 	const impactVolume = 3;
 </script>
