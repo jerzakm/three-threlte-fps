@@ -7,7 +7,6 @@
 	import { Collider, RigidBody, useRapier } from '@threlte/rapier';
 	import { useKeyboardControls } from 'svelte-kbc';
 	import { Quaternion, Vector3 } from 'three';
-	import { Euler } from 'three';
 	import { rendererStores } from '$lib/renderer/rendererStores';
 
 	const { w, a, s, d, shift, space } = useKeyboardControls();
@@ -77,7 +76,7 @@
 		false
 	);
 
-	const { eyesCamera } = rendererStores;
+	const { eyesCamera, eyesPosition, eyesQuat } = rendererStores;
 
 	let isAds = false;
 
@@ -101,6 +100,7 @@
 		mouseMove.y = 0;
 
 		$eyesCamera.quaternion.copy(cameraQuaternion);
+		$eyesQuat.copy(cameraQuaternion);
 
 		if ($w || $a || $s || $d) {
 			let speed = 0.05;
@@ -143,6 +143,8 @@
 		const translation = playerBody.translation();
 
 		$eyesCamera.position.set(translation.x, translation.y + 1.3, translation.z);
+
+		$eyesPosition.copy($eyesCamera.position);
 	});
 </script>
 

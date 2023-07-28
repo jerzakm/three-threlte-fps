@@ -144,7 +144,7 @@
 			.setUserData({
 				type: 'bullet'
 			})
-			.setGravityScale(0.01)
+			.setGravityScale(0.05)
 			.setCanSleep(false)
 			.setCcdEnabled(true);
 

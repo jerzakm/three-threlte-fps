@@ -20,6 +20,8 @@ Title: M4A1 With Hands And Animations
 	} from '@threlte/core';
 	import { useGltf, useGltfAnimations } from '@threlte/extras';
 	import { rendererStores } from '$lib/renderer/rendererStores';
+	import { tweened } from 'svelte/motion';
+	import { quadInOut } from 'svelte/easing';
 
 	type $$Props = Props<THREE.Group> & {
 		startPosition: THREE.Vector3;
@@ -86,14 +88,17 @@ Title: M4A1 With Hands And Animations
 	let scale = 0.01;
 	$: $actions['h2_skeleton|idle']?.play();
 
-	const cg = new THREE.SphereGeometry(0.1, 5, 5);
+	const cg = new THREE.SphereGeometry(0.02, 5, 5);
 	const cm = new THREE.MeshBasicMaterial({ color: 'red', wireframe: false });
 
 	const bStartMesh = new THREE.Mesh(cg, cm);
 	const bEndMarker = new THREE.Mesh(cg, cm);
-
 	const sStartMarker = new THREE.Mesh(cg, cm);
 	const sEndMarker = new THREE.Mesh(cg, cm);
+
+	bStartMesh.visible = false;
+	bEndMarker.visible = false;
+	sStartMarker.visible = false;
 
 	let gunRef: any;
 
@@ -106,9 +111,9 @@ Title: M4A1 With Hands And Animations
 			bEndMarker.position.x = 4;
 			bEndMarker.position.z = 2.6;
 
-			sEndMarker.position.x = 25;
+			sEndMarker.position.x = 7;
 			sEndMarker.position.z = 5.5;
-			sStartMarker.position.x = -5;
+			sStartMarker.position.x = -3;
 			sStartMarker.position.z = 5.5;
 
 			bone.add(bStartMesh);
@@ -136,16 +141,84 @@ Title: M4A1 With Hands And Animations
 	let sightsStart = new THREE.Vector3();
 	let sightsEnd = new THREE.Vector3();
 
-	const { sightsCamera } = rendererStores;
+	const { sightsCamera, activeCamera, eyesCamera, eyesPosition, eyesQuat } = rendererStores;
 
-	useFrame(() => {
+	const sightsRotationHelper = new THREE.Mesh();
+	const sightsQuat = new THREE.Quaternion();
+
+	const currentCameraPosition = new THREE.Vector3().copy($eyesPosition);
+	const currentQuat = new THREE.Quaternion().copy($eyesQuat);
+
+	let x = 0;
+	let y = 0;
+	let z = 0;
+
+	$: console.log($activeCamera);
+
+	let lastTime = 0;
+
+	const time = tweened(0);
+
+	$: {
+		console.log($activeCamera);
+		time.set(0, { duration: 0 });
+		if ($activeCamera === 'eyes') {
+			time.set(1, {
+				easing: quadInOut,
+				duration: 1000
+			});
+		}
+
+		if ($activeCamera === 'sights') {
+			time.set(1, {
+				easing: quadInOut,
+				duration: 500
+			});
+		}
+	}
+
+	useFrame(({ clock }) => {
 		bStartMesh.getWorldPosition(startPosition);
 		bEndMarker.getWorldPosition(endPosition);
 		sStartMarker.getWorldPosition(sightsStart);
 		sEndMarker.getWorldPosition(sightsEnd);
 
-		$sightsCamera?.position.set(...sightsStart.toArray());
-		$sightsCamera?.lookAt(...sightsEnd.toArray());
+		sightsRotationHelper?.position.set(...sightsEnd.toArray());
+		sightsRotationHelper.lookAt(...sightsStart.toArray());
+
+		let currentTime = clock.getElapsedTime();
+		const delta = currentTime - lastTime;
+		lastTime = currentTime;
+
+		const positionSpeed = delta * 100 * $time;
+		const quatSpeed = delta * 300 * $time;
+
+		console.log(positionSpeed);
+
+		if ($activeCamera === 'eyes') {
+			currentCameraPosition.lerp($eyesPosition, positionSpeed);
+
+			currentQuat.slerp($eyesQuat, quatSpeed);
+		}
+
+		if ($activeCamera === 'sights') {
+			currentCameraPosition.lerp(sightsStart, positionSpeed);
+			currentQuat.slerp(sightsQuat, quatSpeed);
+		}
+
+		// $sightsCamera?.position.set(...sightsStart.toArray());
+		// $sightsCamera?.lookAt(...sightsEnd.toArray());
+
+		sightsQuat.setFromEuler(sightsRotationHelper.rotation);
+
+		// $sightsCamera?.position.set(...sightsStart.toArray());
+		// $sightsCamera?.rotation.setFromQuaternion(sightsQuat);
+		$sightsCamera?.position.copy(currentCameraPosition);
+		$sightsCamera?.quaternion.copy(currentQuat);
+
+		x = currentCameraPosition.x;
+		y = currentCameraPosition.y;
+		x = currentCameraPosition.z;
 	});
 </script>
 

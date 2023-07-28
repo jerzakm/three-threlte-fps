@@ -25,7 +25,7 @@
 	<AutoColliders>
 		<T.Mesh>
 			<T.BoxGeometry args={[100, 0.05, 100]} />
-			<T.MeshStandardMaterial color="#cccccc" />
+			<T.MeshStandardMaterial color="#121212" />
 		</T.Mesh>
 		<T.Mesh position.x={20} position.z={-50} position.y={2}>
 			<T.BoxGeometry args={[4, 4, 4]} />

@@ -12,8 +12,12 @@
 	useRender(({ scene, renderer }) => {
 		//
 
-		if ($activeCamera == 'eyes' && $eyesCamera) {
-			renderer?.render(scene, $eyesCamera);
+		// if ($activeCamera == 'eyes' && $eyesCamera) {
+		// 	renderer?.render(scene, $eyesCamera);
+		// }
+
+		if ($activeCamera == 'eyes' && $sightsCamera) {
+			renderer?.render(scene, $sightsCamera);
 		}
 
 		if ($activeCamera == 'sights' && $sightsCamera) {
