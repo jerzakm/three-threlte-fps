@@ -92,7 +92,7 @@ Title: M4A1 With Hands And Animations
 	const component = forwardEventHandlers();
 
 	let scale = 0.01;
-	$: $actions['h2_skeleton|idle']?.play();
+	$: $actions['h2_skeleton|idle2']?.play();
 
 	const cg = new THREE.SphereGeometry(0.02, 5, 5);
 	const cm = new THREE.MeshBasicMaterial({ color: 'red', wireframe: false });
@@ -139,7 +139,7 @@ Title: M4A1 With Hands And Animations
 			$actions['h2_skeleton|fire11']?.reset();
 			$actions['h2_skeleton|fire11']?.setLoop(THREE.LoopRepeat, 1).play();
 		} else {
-			$actions['h2_skeleton|idle']?.play();
+			$actions['h2_skeleton|idle2']?.play();
 		}
 	};
 
@@ -199,23 +199,8 @@ Title: M4A1 With Hands And Animations
 	});
 
 	$: {
-		if ($map) {
-			$map.minFilter = THREE.NearestMipMapNearestFilter;
-			$map.magFilter = THREE.NearestFilter;
-			$map.needsUpdate = true;
-		}
+		console.log($gltf);
 	}
-
-	let uniforms = {
-		colorB: { type: 'vec3', value: new THREE.Color(0xacb6e5) },
-		colorA: { type: 'vec3', value: new THREE.Color(0x74ebd5) }
-	};
-
-	const holoMaterial = new THREE.ShaderMaterial({
-		uniforms: uniforms,
-		fragmentShader: eotechHoloFrag,
-		vertexShader: eotechHoloVert
-	});
 </script>
 
 <T is={ref} dispose={false} {...$$restProps} bind:this={$component}>
@@ -277,25 +262,6 @@ Title: M4A1 With Hands And Animations
 										frustumCulled={false}
 									/>
 
-									<!-- <T.Mesh
-										rotation.x={DEG2RAD * -90}
-										position.y={-13.5}
-										position.x={2}
-										position.z={-0.4}
-										material={holoMaterial}
-									>
-										<T.PlaneGeometry args={[4, 4]} />
-									</T.Mesh> -->
-
-									<!-- <T.Group
-										scale={0.18}
-										rotation.x={DEG2RAD * 90}
-										position.y={-13.5}
-										position.x={-2.98}
-										position.z={-0.4}
-										bind:ref={holoGroup}
-									> -->
-
 									<T.Group
 										scale={0.2}
 										rotation.x={DEG2RAD * 90}
@@ -307,62 +273,31 @@ Title: M4A1 With Hands And Animations
 									>
 										<T.Mesh>
 											<T.TorusGeometry args={[0.72, 0.04, 10, 30]} />
-											<T.MeshBasicMaterial side={THREE.DoubleSide} color={'#ef4400'} transparent />
+											<T.MeshBasicMaterial side={THREE.DoubleSide} color={'#ef4400'} />
 										</T.Mesh>
 
 										<T.Mesh>
 											<T.SphereGeometry args={[0.06]} />
-											<T.MeshBasicMaterial side={THREE.DoubleSide} color={'#ef4400'} transparent />
+											<T.MeshBasicMaterial side={THREE.DoubleSide} color={'#ef4400'} />
 										</T.Mesh>
 										<T.Mesh position.x={0.8}>
 											<T.PlaneGeometry args={[0.25, 0.08]} />
-											<T.MeshBasicMaterial side={THREE.DoubleSide} color={'#ef4400'} transparent />
+											<T.MeshBasicMaterial side={THREE.DoubleSide} color={'#ef4400'} />
 										</T.Mesh>
 										<T.Mesh position.x={-0.8}>
 											<T.PlaneGeometry args={[0.25, 0.08]} />
-											<T.MeshBasicMaterial side={THREE.DoubleSide} color={'#ef4400'} transparent />
+											<T.MeshBasicMaterial side={THREE.DoubleSide} color={'#ef4400'} />
 										</T.Mesh>
 										<T.Mesh position.y={-0.8}>
 											<T.PlaneGeometry args={[0.08, 0.24]} />
-											<T.MeshBasicMaterial side={THREE.DoubleSide} color={'#ef4400'} transparent />
+											<T.MeshBasicMaterial side={THREE.DoubleSide} color={'#ef4400'} />
 										</T.Mesh>
 										<T.Mesh position.y={0.8}>
 											<T.PlaneGeometry args={[0.08, 0.24]} />
-											<T.MeshBasicMaterial side={THREE.DoubleSide} color={'#ef4400'} transparent />
+											<T.MeshBasicMaterial side={THREE.DoubleSide} color={'#ef4400'} />
 										</T.Mesh>
 									</T.Group>
 
-									<!-- <T.Mesh
-										rotation.x={DEG2RAD * 90}
-										position.y={-13.5}
-										position.x={1}
-										position.z={-0.4}
-									>
-										<T.PlaneGeometry args={[2, 2]} />
-										<T.MeshBasicMaterial
-											side={THREE.DoubleSide}
-											map={$map}
-											transparent
-											alphaTest={0.3}
-										/>
-									</T.Mesh> -->
-
-									<!-- <T.Mesh
-										rotation.x={DEG2RAD * 90}
-										position.y={-13.5}
-										position.x={-2.98}
-										position.z={-0.4}
-									>
-										<T.PlaneGeometry args={[0.3, 0.3]} />
-										<T.MeshBasicMaterial
-											side={THREE.DoubleSide}
-											map={$map}
-											transparent
-											alphaTest={0.3}
-										/>
-									</T.Mesh> -->
-
-									<!-- material={gltf.materials.lense_col} -->
 									<!-- <T.SkinnedMesh
 										name="viewer_holo"
 										geometry={gltf.nodes.Object_15.geometry}
@@ -377,7 +312,7 @@ Title: M4A1 With Hands And Animations
 										skeleton={gltf.nodes.Object_16.skeleton}
 										frustumCulled={false}
 									/>
-									<!-- <T.SkinnedMesh
+									<T.SkinnedMesh
 										name="scope_2x"
 										geometry={gltf.nodes.Object_17.geometry}
 										material={gltf.materials.magnifier_col}
@@ -390,7 +325,7 @@ Title: M4A1 With Hands And Animations
 										material={gltf.materials.lens_col}
 										skeleton={gltf.nodes.Object_18.skeleton}
 										frustumCulled={false}
-									/> -->
+									/>
 									<T.SkinnedMesh
 										name="gun"
 										geometry={gltf.nodes.Object_19.geometry}
