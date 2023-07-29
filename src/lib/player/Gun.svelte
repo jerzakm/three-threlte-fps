@@ -8,6 +8,7 @@
 	import { rendererStores } from '$lib/renderer/rendererStores';
 	import { Quaternion, Vector3, type Group } from 'three';
 	import { DEG2RAD } from 'three/src/math/MathUtils';
+	import { useSystem } from '$lib/systems/gameSystems';
 
 	const { eyesCamera, activeCamera } = rendererStores;
 
@@ -97,6 +98,8 @@
 	let shotIndex = 0;
 	let impactIndex = 0;
 
+	const { bulletSystem } = useSystem();
+
 	const shoot = () => {
 		const shotsAudio = [audio1, audio2, audio3];
 
@@ -126,16 +129,23 @@
 			.setCanSleep(false)
 			.setCcdEnabled(true);
 
-		let rigidBody = world.createRigidBody(rigidBodyDesc);
+		// let rigidBody = world.createRigidBody(rigidBodyDesc);
 
-		let collider = world.createCollider(colliderDesc, rigidBody);
+		// let collider = world.createCollider(colliderDesc, rigidBody);
 
-		collider.setRestitution(0);
+		// collider.setRestitution(0);
 
-		bullets.push(collider);
+		// bullets.push(collider);
 		setTimeout(() => {
 			shooting = false;
 		}, 200);
+
+		bulletSystem?.spawnBullet({
+			origin: [barrelStart.x, barrelStart.y, barrelStart.z],
+			target: [barrelEnd.x, barrelEnd.y, barrelEnd.z],
+			velocity: 1200,
+			dropoff: 3
+		});
 	};
 
 	const handleClick = (e: MouseEvent) => {
