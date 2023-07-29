@@ -38,6 +38,8 @@ Title: M4A1 With Hands And Animations
 	export const ref = new THREE.Group();
 	export let shooting = false;
 
+	let holoGroup: THREE.Group;
+
 	type ActionName =
 		| 'h2_skeleton|draw'
 		| 'h2_skeleton|draw2'
@@ -127,6 +129,8 @@ Title: M4A1 With Hands And Animations
 			bone.add(sStartMarker);
 			bone.add(sEndMarker);
 			initialized = true;
+
+			bone.add(holoGroup);
 		}
 	}
 
@@ -283,12 +287,23 @@ Title: M4A1 With Hands And Animations
 										<T.PlaneGeometry args={[4, 4]} />
 									</T.Mesh> -->
 
-									<T.Group
+									<!-- <T.Group
 										scale={0.18}
 										rotation.x={DEG2RAD * 90}
 										position.y={-13.5}
 										position.x={-2.98}
 										position.z={-0.4}
+										bind:ref={holoGroup}
+									> -->
+
+									<T.Group
+										scale={0.2}
+										rotation.x={DEG2RAD * 90}
+										rotation.y={DEG2RAD * 90}
+										bind:ref={holoGroup}
+										position.x={6}
+										position.y={0}
+										position.z={5.45}
 									>
 										<T.Mesh>
 											<T.TorusGeometry args={[0.72, 0.04, 10, 30]} />

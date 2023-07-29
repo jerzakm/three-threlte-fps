@@ -11,7 +11,7 @@
 	const { activeCamera } = rendererStores;
 
 	onMount(() => {
-		activeCamera.set('sights');
+		activeCamera.set('eyes');
 	});
 </script>
 

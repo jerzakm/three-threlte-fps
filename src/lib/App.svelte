@@ -5,7 +5,6 @@
 	import { KeyboardControls, wasdConfig } from 'svelte-kbc';
 	import Cameras from '$lib/renderer/Cameras.svelte';
 	import Renderer from '$lib/renderer/Renderer.svelte';
-	import * as THREE from 'three';
 </script>
 
 <KeyboardControls config={wasdConfig()}>
