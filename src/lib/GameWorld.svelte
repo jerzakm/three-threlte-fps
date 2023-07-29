@@ -1,16 +1,26 @@
 <script lang="ts">
-	import BulletSystem from '$lib/systems/BulletSystem.svelte';
+	import { useFrame } from '@threlte/core';
+	import { initBulletSystem } from '$lib/systems/bulletSystem';
+	import { initSoundSystem } from '$lib/systems/soundSystem';
 	import { setContext } from 'svelte';
-	import type { GameSystems } from '$lib/systems/gameSystems';
-	import { initBulletSystem } from './systems/bulletSystem';
+	import { gameData } from '$lib/systems/_gameData';
+	import SoundSystem from '$lib/sounds/SoundSystem.svelte';
 
-	const systems: GameSystems = {
-		bulletSystem: initBulletSystem()
+	setContext('game-data-ctx', gameData);
+
+	const systems = {
+		bulletSystem: initBulletSystem(),
+		soundSystem: initSoundSystem()
 	};
 
-	setContext<GameSystems>('gameSystems', systems);
+	setContext('game-systems-ctx', systems);
+
+	useFrame(() => {
+		systems.bulletSystem.update();
+		systems.bulletSystem.cleanup();
+		systems.soundSystem.update();
+	});
 </script>
 
+<SoundSystem />
 <slot />
-
-<BulletSystem />

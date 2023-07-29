@@ -1,9 +1,8 @@
 <script lang="ts">
-	import { requestPointerLockWithUnadjustedMovement } from '$lib/util/pointerLock';
 	import type { Collider as RCollider, RigidBody as RRigidBody } from '@dimforge/rapier3d-compat';
 	import Gun from './Gun.svelte';
 
-	import { T, useFrame, useThrelte } from '@threlte/core';
+	import { T, useFrame } from '@threlte/core';
 	import { Collider, RigidBody, useRapier } from '@threlte/rapier';
 	import { useKeyboardControls } from 'svelte-kbc';
 	import { Quaternion, Vector3 } from 'three';
@@ -15,8 +14,8 @@
 
 	const { w, a, s, d, shift, space } = useKeyboardControls();
 
-	const RUN_SPEED = 2;
-	const WALK_SPEED = 1;
+	const RUN_SPEED = 4;
+	const WALK_SPEED = 2;
 
 	function clamp(number: number, min: number, max: number) {
 		return Math.max(min, Math.min(number, max));
@@ -28,10 +27,10 @@
 	const { world } = useRapier();
 
 	let characterController = world.createCharacterController(0.01);
-	// characterController.setMaxSlopeClimbAngle((45 * Math.PI) / 180);
-	// characterController.setMinSlopeSlideAngle((30 * Math.PI) / 180);
-	// characterController.enableAutostep(0.5, 0.2, true);
-	// characterController.enableSnapToGround(0.5);
+	characterController.setMaxSlopeClimbAngle((45 * Math.PI) / 180);
+	characterController.setMinSlopeSlideAngle((30 * Math.PI) / 180);
+	characterController.enableAutostep(0.5, 0.2, true);
+	characterController.enableSnapToGround(0.5);
 
 	let cameraQuaternion;
 

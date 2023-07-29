@@ -8,7 +8,7 @@
 	import { rendererStores } from '$lib/renderer/rendererStores';
 	import { Quaternion, Vector3, type Group } from 'three';
 	import { DEG2RAD } from 'three/src/math/MathUtils';
-	import { useSystem } from '$lib/systems/gameSystems';
+	import { useSystem } from '$lib/systems/_systems';
 
 	const { eyesCamera, activeCamera } = rendererStores;
 
@@ -24,7 +24,7 @@
 	export let phi = 0;
 	export let theta = 0;
 
-	const { rapier, world } = useRapier();
+	const { rapier, world, colliderEventDispatchers } = useRapier();
 
 	useFrame(({ clock }) => {
 		if ($eyesCamera) {
@@ -56,8 +56,6 @@
 	useFrame(() => {
 		for (let i = 0; i < bullets.length; i++) {
 			const bullet = bullets[i];
-
-			// sound.play();
 
 			if (bullet) {
 				world.contactsWith(bullet, (otherCollider) => {

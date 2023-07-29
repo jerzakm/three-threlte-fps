@@ -197,10 +197,6 @@ Title: M4A1 With Hands And Animations
 	const eotechHoloSights = new THREE.MeshStandardMaterial({
 		map: $map
 	});
-
-	$: {
-		console.log($gltf);
-	}
 </script>
 
 <T is={ref} dispose={false} {...$$restProps} bind:this={$component}>

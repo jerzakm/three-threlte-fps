@@ -52,7 +52,7 @@
 
 		{#each { length: 10 } as d, x}
 			{#each { length: 10 } as rz, z}
-				<AutoColliders>
+				<AutoColliders restitution={0}>
 					<T.Mesh position.x={(x - 5) * 20 + 3} position.z={(z - 5) * 50 + 5} position.y={2}>
 						<T.BoxGeometry args={[4, 4, 4]} />
 						<T.MeshStandardMaterial color="#444444" wireframe />
