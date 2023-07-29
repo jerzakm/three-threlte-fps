@@ -111,7 +111,7 @@
 		// shotsAudio[shotIndex].position = barrelEnd;
 		shotsAudio[shotIndex].play();
 		shooting = true;
-		barrelDirection.subVectors(barrelStart, barrelEnd).multiplyScalar(1500);
+		barrelDirection.subVectors(barrelStart, barrelEnd).multiplyScalar(1200);
 
 		const { x, y, z } = barrelStart;
 
@@ -122,7 +122,7 @@
 			.setUserData({
 				type: 'bullet'
 			})
-			.setGravityScale(0.05)
+			.setGravityScale(3)
 			.setCanSleep(false)
 			.setCcdEnabled(true);
 

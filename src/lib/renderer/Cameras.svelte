@@ -1,12 +1,11 @@
 <script lang="ts">
 	import { T, useFrame } from '@threlte/core';
 	import { AudioListener } from '@threlte/extras';
-	import { Vector3, type PerspectiveCamera, Quaternion, CameraHelper } from 'three';
-	import { rendererStores } from './rendererStores';
-	import { cameraStores } from './cameraStores';
 	import { quadInOut } from 'svelte/easing';
 	import { tweened } from 'svelte/motion';
-	import { playerStores } from '$lib/player/playerStores';
+	import { Quaternion, Vector3, type PerspectiveCamera } from 'three';
+	import { cameraStores } from './cameraStores';
+	import { rendererStores } from './rendererStores';
 
 	let eyesCamera: PerspectiveCamera | undefined = undefined;
 	let sightsCamera: PerspectiveCamera | undefined = undefined;
@@ -17,9 +16,7 @@
 	$: debugCamera ? rendererStores.debugCamera.set(debugCamera) : '';
 
 	const { activeCamera } = rendererStores;
-	const { eyesPosition, eyesQuat, sightsQuat, sightsPosition, sightsPosition2 } = cameraStores;
-
-	const { strafing, playerPosition } = playerStores;
+	const { eyesPosition, eyesQuat, sightsQuat } = cameraStores;
 
 	const currentCameraPosition = new Vector3().copy($eyesPosition);
 	const currentQuat = new Quaternion().copy($eyesQuat);
@@ -49,11 +46,7 @@
 		}
 
 		if ($activeCamera === 'sights') {
-			// currentCameraPosition.lerp($sightsPosition2, $cameraSwapTween);
 			currentCameraPosition.copy($eyesPosition);
-			// currentCameraPosition.x -= $sightsPosition.x - $playerPosition.x;
-			// currentCameraPosition.z += $sightsPosition.z - $playerPosition.z;
-			// currentQuat.slerp($sightsQuat, $cameraSwapTween);
 			currentQuat.slerp($sightsQuat, 0.16);
 			// currentQuat.slerp($eyesQuat, $cameraSwapTween);
 		}

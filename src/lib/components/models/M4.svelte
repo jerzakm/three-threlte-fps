@@ -8,8 +8,6 @@ Title: M4A1 With Hands And Animations
 -->
 
 <script lang="ts">
-	import * as THREE from 'three';
-	import { Group } from 'three';
 	import {
 		T,
 		type Props,
@@ -18,11 +16,16 @@ Title: M4A1 With Hands And Animations
 		forwardEventHandlers,
 		useFrame
 	} from '@threlte/core';
-	import { useGltf, useGltfAnimations } from '@threlte/extras';
+	import { useGltf, useGltfAnimations, useTexture } from '@threlte/extras';
 	import { rendererStores } from '$lib/renderer/rendererStores';
 	import { tweened } from 'svelte/motion';
-	import { quadInOut, quadOut } from 'svelte/easing';
+	import { quadInOut } from 'svelte/easing';
 	import { cameraStores } from '$lib/renderer/cameraStores';
+	import * as THREE from 'three';
+	import { DEG2RAD } from 'three/src/math/MathUtils';
+	import CustomShaderMaterial from 'three-custom-shader-material/vanilla';
+	import eotechHoloFrag from '$lib/shaders/eotechHolo_f.glsl?raw';
+	import eotechHoloVert from '$lib/shaders/eotechHolo_v.glsl?raw';
 
 	type $$Props = Props<THREE.Group> & {
 		startPosition: THREE.Vector3;
@@ -32,7 +35,7 @@ Title: M4A1 With Hands And Animations
 	type $$Events = Events<THREE.Group>;
 	type $$Slots = Slots<THREE.Group> & { fallback: {}; error: { error: any } };
 
-	export const ref = new Group();
+	export const ref = new THREE.Group();
 	export let shooting = false;
 
 	type ActionName =
@@ -99,6 +102,7 @@ Title: M4A1 With Hands And Animations
 
 	bStartMesh.visible = false;
 	bEndMarker.visible = false;
+	sEndMarker.visible = false;
 	sStartMarker.visible = false;
 
 	let gunRef: any;
@@ -161,9 +165,9 @@ Title: M4A1 With Hands And Animations
 	});
 
 	let aimOffsetX = 3;
-	let aimOffsetY = 0.5;
+	let aimOffsetY = 0.38;
 
-	let aimOffsetZ = -4;
+	let aimOffsetZ = -5;
 
 	const { activeCamera } = rendererStores;
 	const cameraSwapTween = tweened(0);
@@ -183,6 +187,31 @@ Title: M4A1 With Hands And Animations
 			});
 		}
 	}
+
+	const map = useTexture('/sprites/eotechHolo.png');
+
+	const eotechHoloSights = new THREE.MeshStandardMaterial({
+		map: $map
+	});
+
+	$: {
+		if ($map) {
+			$map.minFilter = THREE.NearestMipMapNearestFilter;
+			$map.magFilter = THREE.NearestFilter;
+			$map.needsUpdate = true;
+		}
+	}
+
+	let uniforms = {
+		colorB: { type: 'vec3', value: new THREE.Color(0xacb6e5) },
+		colorA: { type: 'vec3', value: new THREE.Color(0x74ebd5) }
+	};
+
+	const holoMaterial = new THREE.ShaderMaterial({
+		uniforms: uniforms,
+		fragmentShader: eotechHoloFrag,
+		vertexShader: eotechHoloVert
+	});
 </script>
 
 <T is={ref} dispose={false} {...$$restProps} bind:this={$component}>
@@ -243,10 +272,86 @@ Title: M4A1 With Hands And Animations
 										skeleton={gltf.nodes.Object_13.skeleton}
 										frustumCulled={false}
 									/>
+
+									<!-- <T.Mesh
+										rotation.x={DEG2RAD * -90}
+										position.y={-13.5}
+										position.x={2}
+										position.z={-0.4}
+										material={holoMaterial}
+									>
+										<T.PlaneGeometry args={[4, 4]} />
+									</T.Mesh> -->
+
+									<T.Group
+										scale={0.18}
+										rotation.x={DEG2RAD * 90}
+										position.y={-13.5}
+										position.x={-2.98}
+										position.z={-0.4}
+									>
+										<T.Mesh>
+											<T.TorusGeometry args={[0.72, 0.04, 10, 30]} />
+											<T.MeshBasicMaterial side={THREE.DoubleSide} color={'#ef4400'} transparent />
+										</T.Mesh>
+
+										<T.Mesh>
+											<T.SphereGeometry args={[0.06]} />
+											<T.MeshBasicMaterial side={THREE.DoubleSide} color={'#ef4400'} transparent />
+										</T.Mesh>
+										<T.Mesh position.x={0.8}>
+											<T.PlaneGeometry args={[0.25, 0.08]} />
+											<T.MeshBasicMaterial side={THREE.DoubleSide} color={'#ef4400'} transparent />
+										</T.Mesh>
+										<T.Mesh position.x={-0.8}>
+											<T.PlaneGeometry args={[0.25, 0.08]} />
+											<T.MeshBasicMaterial side={THREE.DoubleSide} color={'#ef4400'} transparent />
+										</T.Mesh>
+										<T.Mesh position.y={-0.8}>
+											<T.PlaneGeometry args={[0.08, 0.24]} />
+											<T.MeshBasicMaterial side={THREE.DoubleSide} color={'#ef4400'} transparent />
+										</T.Mesh>
+										<T.Mesh position.y={0.8}>
+											<T.PlaneGeometry args={[0.08, 0.24]} />
+											<T.MeshBasicMaterial side={THREE.DoubleSide} color={'#ef4400'} transparent />
+										</T.Mesh>
+									</T.Group>
+
+									<!-- <T.Mesh
+										rotation.x={DEG2RAD * 90}
+										position.y={-13.5}
+										position.x={1}
+										position.z={-0.4}
+									>
+										<T.PlaneGeometry args={[2, 2]} />
+										<T.MeshBasicMaterial
+											side={THREE.DoubleSide}
+											map={$map}
+											transparent
+											alphaTest={0.3}
+										/>
+									</T.Mesh> -->
+
+									<!-- <T.Mesh
+										rotation.x={DEG2RAD * 90}
+										position.y={-13.5}
+										position.x={-2.98}
+										position.z={-0.4}
+									>
+										<T.PlaneGeometry args={[0.3, 0.3]} />
+										<T.MeshBasicMaterial
+											side={THREE.DoubleSide}
+											map={$map}
+											transparent
+											alphaTest={0.3}
+										/>
+									</T.Mesh> -->
+
+									<!-- material={gltf.materials.lense_col} -->
 									<!-- <T.SkinnedMesh
 										name="viewer_holo"
 										geometry={gltf.nodes.Object_15.geometry}
-										material={gltf.materials.lense_col}
+										material={eotechHoloSights}
 										skeleton={gltf.nodes.Object_15.skeleton}
 										frustumCulled={false}
 									/> -->
