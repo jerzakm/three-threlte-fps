@@ -1,11 +1,18 @@
 <script lang="ts">
 	import App from '$lib/App.svelte';
+	import { onMount } from 'svelte';
 
 	let started = false;
+
+	onMount(() => {
+		started = true;
+	});
 </script>
 
 <div>
-	<App />
+	{#if started}
+		<App />
+	{/if}
 </div>
 
 <style>

@@ -23,9 +23,6 @@ Title: M4A1 With Hands And Animations
 	import { cameraStores } from '$lib/renderer/cameraStores';
 	import * as THREE from 'three';
 	import { DEG2RAD } from 'three/src/math/MathUtils';
-	import CustomShaderMaterial from 'three-custom-shader-material/vanilla';
-	import eotechHoloFrag from '$lib/shaders/eotechHolo_f.glsl?raw';
-	import eotechHoloVert from '$lib/shaders/eotechHolo_v.glsl?raw';
 
 	type $$Props = Props<THREE.Group> & {
 		startPosition: THREE.Vector3;

@@ -31,7 +31,6 @@
 <World>
 	<GameWorld>
 		<Player />
-
 		<AutoColliders>
 			<T.Mesh>
 				<T.BoxGeometry args={[100, 0.05, 100]} />

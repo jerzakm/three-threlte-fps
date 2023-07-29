@@ -43,7 +43,6 @@
 		"howler": "^2.2.3",
 		"i": "^0.3.7",
 		"npm": "^9.8.1",
-		"svelte-kbc": "^0.1.1",
-		"three-custom-shader-material": "^5.4.0"
+		"svelte-kbc": "^0.1.1"
 	}
 }

@@ -1,8 +1,5 @@
 <script lang="ts">
 	import M4 from '$lib/components/models/M4.svelte';
-	import type { Collider } from '@dimforge/rapier3d-compat';
-	import { PositionalAudio } from '@threlte/extras';
-	import { PositionalAudioHelper } from 'three/examples/jsm/helpers/PositionalAudioHelper.js';
 	import { T, useFrame } from '@threlte/core';
 	import { useRapier } from '@threlte/rapier';
 	import { rendererStores } from '$lib/renderer/rendererStores';
