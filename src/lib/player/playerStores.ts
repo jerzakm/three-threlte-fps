@@ -5,5 +5,6 @@ const playerPosition = writable({
 	y: 0,
 	z: 0
 });
+const strafing = writable(0);
 
-export const playerStores = { playerPosition };
+export const playerStores = { playerPosition, strafing };

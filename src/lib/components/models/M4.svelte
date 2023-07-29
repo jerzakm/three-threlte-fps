@@ -159,13 +159,45 @@ Title: M4A1 With Hands And Animations
 		$sightsPosition.copy(sightsStart);
 		$sightsQuat.setFromEuler(sightsRotationHelper.rotation);
 	});
+
+	let aimOffsetX = 3;
+	let aimOffsetY = 0.5;
+
+	let aimOffsetZ = -4;
+
+	const { activeCamera } = rendererStores;
+	const cameraSwapTween = tweened(0);
+
+	$: {
+		if ($activeCamera === 'eyes') {
+			cameraSwapTween.set(0, {
+				easing: quadInOut,
+				duration: 200
+			});
+		}
+
+		if ($activeCamera === 'sights') {
+			cameraSwapTween.set(1, {
+				easing: quadInOut,
+				duration: 200
+			});
+		}
+	}
 </script>
 
 <T is={ref} dispose={false} {...$$restProps} bind:this={$component}>
 	{#await gltf}
 		<slot name="fallback" />
 	{:then gltf}
-		<T.Group name="Sketchfab_Scene" frustumCulled={false}>
+		<T.Group
+			name="Sketchfab_Scene"
+			frustumCulled={false}
+			position={[
+				aimOffsetX * $cameraSwapTween,
+				aimOffsetY * $cameraSwapTween,
+				aimOffsetZ * $cameraSwapTween
+			]}
+		>
 			<T.Group name="Sketchfab_model" rotation={[-Math.PI / 2, 0, 0]} frustumCulled={false}>
 				<T.Group
 					name="ab25487b58b043d09a956bcac5cbf842fbx"

@@ -6,6 +6,7 @@
 	import { cameraStores } from './cameraStores';
 	import { quadInOut } from 'svelte/easing';
 	import { tweened } from 'svelte/motion';
+	import { playerStores } from '$lib/player/playerStores';
 
 	let eyesCamera: PerspectiveCamera | undefined = undefined;
 	let sightsCamera: PerspectiveCamera | undefined = undefined;
@@ -16,46 +17,45 @@
 	$: debugCamera ? rendererStores.debugCamera.set(debugCamera) : '';
 
 	const { activeCamera } = rendererStores;
-	const { eyesPosition, eyesQuat, sightsQuat, sightsPosition } = cameraStores;
+	const { eyesPosition, eyesQuat, sightsQuat, sightsPosition, sightsPosition2 } = cameraStores;
+
+	const { strafing, playerPosition } = playerStores;
 
 	const currentCameraPosition = new Vector3().copy($eyesPosition);
 	const currentQuat = new Quaternion().copy($eyesQuat);
 
-	const time = tweened(0);
+	const cameraSwapTween = tweened(0);
 
 	$: {
-		time.set(0, { duration: 0 });
+		cameraSwapTween.set(0, { duration: 0 });
 		if ($activeCamera === 'eyes') {
-			time.set(1, {
+			cameraSwapTween.set(1, {
 				easing: quadInOut,
-				duration: 350
+				duration: 500
 			});
 		}
 
 		if ($activeCamera === 'sights') {
-			time.set(1, {
+			cameraSwapTween.set(1, {
 				easing: quadInOut,
-				duration: 350
+				duration: 800
 			});
 		}
 	}
-	let lastTime = 0;
-	useFrame(({ clock }) => {
-		let currentTime = clock.getElapsedTime();
-		const delta = currentTime - lastTime;
-		lastTime = currentTime;
-
-		const positionSpeed = delta * 20 * $time;
-		const quatSpeed = delta * 150 * $time;
-
+	useFrame(() => {
 		if ($activeCamera === 'eyes') {
-			currentCameraPosition.lerp($eyesPosition, positionSpeed);
-			currentQuat.slerp($eyesQuat, quatSpeed);
+			currentCameraPosition.lerp($eyesPosition, $cameraSwapTween);
+			currentQuat.slerp($eyesQuat, $cameraSwapTween);
 		}
 
 		if ($activeCamera === 'sights') {
-			currentCameraPosition.lerp($sightsPosition, positionSpeed);
-			currentQuat.slerp($sightsQuat, quatSpeed);
+			// currentCameraPosition.lerp($sightsPosition2, $cameraSwapTween);
+			currentCameraPosition.copy($eyesPosition);
+			// currentCameraPosition.x -= $sightsPosition.x - $playerPosition.x;
+			// currentCameraPosition.z += $sightsPosition.z - $playerPosition.z;
+			// currentQuat.slerp($sightsQuat, $cameraSwapTween);
+			currentQuat.slerp($sightsQuat, 0.16);
+			// currentQuat.slerp($eyesQuat, $cameraSwapTween);
 		}
 
 		if ($activeCamera === 'debug') {
@@ -69,10 +69,10 @@
 
 <T.PerspectiveCamera fov={60} near={0.0001} bind:ref={eyesCamera} let:ref>
 	<AudioListener />
-	<T.CameraHelper args={[ref]} />
+	<!-- <T.CameraHelper args={[ref]} /> -->
 </T.PerspectiveCamera>
 
 <T.PerspectiveCamera fov={60} near={0.0001} bind:ref={sightsCamera} let:ref>
-	<T.CameraHelper args={[ref]} />
+	<!-- <T.CameraHelper args={[ref]} /> -->
 </T.PerspectiveCamera>
 <T.PerspectiveCamera fov={60} near={0.0001} bind:ref={debugCamera} position={[-2, 3, -2]} />

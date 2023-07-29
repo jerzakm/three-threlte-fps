@@ -11,7 +11,7 @@
 	const { activeCamera } = rendererStores;
 
 	onMount(() => {
-		activeCamera.set('debug');
+		activeCamera.set('sights');
 	});
 </script>
 

@@ -9,6 +9,9 @@
 	import { Quaternion, Vector3 } from 'three';
 	import { rendererStores } from '$lib/renderer/rendererStores';
 	import { cameraStores } from '$lib/renderer/cameraStores';
+	import { playerStores } from './playerStores';
+
+	const { playerPosition } = playerStores;
 
 	const { w, a, s, d, shift, space } = useKeyboardControls();
 
@@ -25,10 +28,10 @@
 	const { world } = useRapier();
 
 	let characterController = world.createCharacterController(0.01);
-	characterController.setMaxSlopeClimbAngle((45 * Math.PI) / 180);
-	characterController.setMinSlopeSlideAngle((30 * Math.PI) / 180);
-	characterController.enableAutostep(0.5, 0.2, true);
-	characterController.enableSnapToGround(0.5);
+	// characterController.setMaxSlopeClimbAngle((45 * Math.PI) / 180);
+	// characterController.setMinSlopeSlideAngle((30 * Math.PI) / 180);
+	// characterController.enableAutostep(0.5, 0.2, true);
+	// characterController.enableSnapToGround(0.5);
 
 	let cameraQuaternion;
 
@@ -43,7 +46,7 @@
 		y: 0
 	};
 
-	const mouseSensitivity = 0.002;
+	const mouseSensitivity = 0.0012;
 
 	window.addEventListener('mousemove', (e) => {
 		mouseMove.x += e.movementX;
@@ -57,7 +60,7 @@
 	let guntheta = 0;
 
 	const { eyesCamera } = rendererStores;
-	const { eyesPosition, eyesQuat } = cameraStores;
+	const { eyesPosition, eyesQuat, sightsPosition2 } = cameraStores;
 
 	useFrame(({ clock }) => {
 		if (!$eyesCamera) return;
@@ -81,8 +84,7 @@
 		$eyesCamera.quaternion.copy(cameraQuaternion);
 		$eyesQuat.copy(cameraQuaternion);
 
-		let xOffset = 0;
-
+		playerStores.strafing.set(0);
 		if ($w || $a || $s || $d) {
 			let speed = 0.05;
 
@@ -102,12 +104,13 @@
 
 			if ($a) {
 				strafe -= speed;
-				xOffset = -0.03;
+				playerStores.strafing.set(-1);
 			}
-			a;
 
 			if ($d) {
 				strafe += speed;
+
+				playerStores.strafing.set(1);
 			}
 
 			const direction = new Vector3(strafe, 0, forward);
@@ -125,8 +128,15 @@
 
 		const translation = playerBody.translation();
 
+		playerPosition.set({
+			x: translation.x,
+			y: translation.y,
+			z: translation.z
+		});
+
 		$eyesCamera.position.set(translation.x, translation.y + 1.9, translation.z);
 
+		$sightsPosition2.copy($eyesCamera.position);
 		$eyesPosition.copy($eyesCamera.position);
 	});
 </script>

@@ -1,16 +1,13 @@
 <script lang="ts">
 	import M4 from '$lib/components/models/M4.svelte';
 	import type { Collider } from '@dimforge/rapier3d-compat';
-	import { AudioListener, PositionalAudio } from '@threlte/extras';
+	import { PositionalAudio } from '@threlte/extras';
 	import { PositionalAudioHelper } from 'three/examples/jsm/helpers/PositionalAudioHelper.js';
-
-	import { T, useFrame, useThrelte } from '@threlte/core';
+	import { T, useFrame } from '@threlte/core';
 	import { useRapier } from '@threlte/rapier';
-
-	import { Quaternion, Vector3, type Euler, type Group } from 'three';
-	import { DEG2RAD } from 'three/src/math/MathUtils';
 	import { rendererStores } from '$lib/renderer/rendererStores';
-	import { playerStores } from './playerStores';
+	import { Quaternion, Vector3, type Group } from 'three';
+	import { DEG2RAD } from 'three/src/math/MathUtils';
 
 	const { eyesCamera, activeCamera } = rendererStores;
 
@@ -26,28 +23,14 @@
 	export let phi = 0;
 	export let theta = 0;
 
-	const GUN_SHIFT_SPEED = 40;
-
-	let lastTime = 0;
-
 	const { rapier, world } = useRapier();
 
-	// world.maxVelocityIterations = 32;
-
 	useFrame(({ clock }) => {
-		x = $eyesCamera.position.x;
-		console.log(x);
-
-		// x+=1
-		y = $eyesCamera.position.y;
-		z = $eyesCamera.position.z;
-		// x = $camera.position.x - 0.06;
-		// y = $camera.position.y + 0.01;
-		// z = $camera.position.z + 0.08;
-		// z-=2.5
-		const time = clock.getElapsedTime();
-		const delta = time - lastTime;
-		lastTime = time * 1;
+		if ($eyesCamera) {
+			x = $eyesCamera.position.x;
+			y = $eyesCamera.position.y;
+			z = $eyesCamera.position.z;
+		}
 
 		const qx = new Quaternion();
 		qx.setFromAxisAngle(new Vector3(0, -1, 0), phi);
@@ -59,21 +42,15 @@
 		gunQuat.multiply(qx);
 		gunQuat.multiply(qz);
 
-		// gunQuat.w -= 1.9;
-		// gunQuat.z += Math.sin(time);
-
-		m4.quaternion.slerp(gunQuat, delta * GUN_SHIFT_SPEED);
+		m4.quaternion.copy(gunQuat);
 		// m4.setRotationFromQuaternion(gunQuat);
 	});
 
 	let barrelStart: Vector3;
 	let barrelEnd: Vector3;
-
 	let barrelDirection = new Vector3();
 
 	const bullets: (Collider | undefined)[] = [];
-
-	let sound;
 
 	useFrame(() => {
 		for (let i = 0; i < bullets.length; i++) {
