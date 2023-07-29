@@ -12,8 +12,10 @@ const bulletData: {
 
 const soundData: {
 	impactSounds: GameSound[];
+	otherSounds: GameSound[];
 } = {
-	impactSounds: []
+	impactSounds: [],
+	otherSounds: []
 };
 
 export const gameData = {

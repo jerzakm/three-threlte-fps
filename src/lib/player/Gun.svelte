@@ -9,6 +9,7 @@
 	import { Quaternion, Vector3, type Group } from 'three';
 	import { DEG2RAD } from 'three/src/math/MathUtils';
 	import { useSystem } from '$lib/systems/_systems';
+	import { soundMap } from '$lib/systems/soundSystem';
 
 	const { eyesCamera, activeCamera } = rendererStores;
 
@@ -51,35 +52,13 @@
 	let barrelEnd: Vector3;
 	let barrelDirection = new Vector3();
 
-	const bullets: (Collider | undefined)[] = [];
-
 	let shooting = false;
 
-	let audio1: any;
-	let audio2: any;
-	let audio3: any;
-
-	let shotIndex = 0;
-
-	const { bulletSystem } = useSystem();
+	const { bulletSystem, soundSystem } = useSystem();
 
 	const shoot = () => {
-		const shotsAudio = [audio1, audio2, audio3];
-
-		shotIndex < shotsAudio.length - 1 ? shotIndex++ : (shotIndex = 0);
-
-		shotsAudio[shotIndex].stop();
-
-		shotsAudio[shotIndex].parent.position.x = barrelStart.x;
-		shotsAudio[shotIndex].parent.position.y = barrelStart.y;
-		shotsAudio[shotIndex].parent.position.z = barrelStart.z;
-
-		// shotsAudio[shotIndex].position = barrelEnd;
-		shotsAudio[shotIndex].play();
 		shooting = true;
 		barrelDirection.subVectors(barrelStart, barrelEnd).multiplyScalar(1200);
-
-		const { x, y, z } = barrelStart;
 
 		setTimeout(() => {
 			shooting = false;
@@ -91,6 +70,15 @@
 			velocity: 1200,
 			dropoff: 3
 		});
+
+		soundSystem.makeSound({
+			origin: barrelStart,
+			sound: soundMap.shot,
+			volume: 2,
+			coneInnerAngle: 360,
+			coneOuterAngle: 360,
+			coneOuterGain: 1
+		});
 	};
 
 	const handleClick = (e: MouseEvent) => {
@@ -101,18 +89,9 @@
 		}
 
 		if (e.button === 2) {
-			//optics
 			$activeCamera === 'eyes' ? activeCamera.set('sights') : activeCamera.set('eyes');
 		}
 	};
-
-	const directionalCone = {
-		coneInnerAngle: 360,
-		coneOuterAngle: 360,
-		coneOuterGain: 0.9
-	};
-
-	const shotVolume = 1.7;
 </script>
 
 <svelte:window on:click={handleClick} />
@@ -120,39 +99,3 @@
 <T.Group position={[x, y, z]} rotation.y={-DEG2RAD * 180} scale={0.03}>
 	<M4 bind:ref={m4} bind:startPosition={barrelStart} bind:endPosition={barrelEnd} {shooting} />
 </T.Group>
-<T.Mesh>
-	<PositionalAudio
-		autostart
-		volume={shotVolume}
-		src={'/audio/m4shot.mp3'}
-		bind:ref={audio1}
-		let:ref
-		{directionalCone}
-	>
-		<!-- <T is={PositionalAudioHelper} args={[ref]} /> -->
-	</PositionalAudio>
-</T.Mesh>
-<T.Mesh>
-	<PositionalAudio
-		autostart
-		volume={shotVolume}
-		src={'/audio/m4shot.mp3'}
-		bind:ref={audio2}
-		{directionalCone}
-		let:ref
-	>
-		<!-- <T is={PositionalAudioHelper} args={[ref]} /> -->
-	</PositionalAudio>
-</T.Mesh>
-<T.Mesh>
-	<PositionalAudio
-		autostart
-		volume={shotVolume}
-		src={'/audio/m4shot.mp3'}
-		bind:ref={audio3}
-		{directionalCone}
-		let:ref
-	>
-		<!-- <T is={PositionalAudioHelper} args={[ref]} /> -->
-	</PositionalAudio>
-</T.Mesh>

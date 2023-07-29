@@ -13,7 +13,7 @@
 	const impactDirectionalCone = {
 		coneInnerAngle: 360,
 		coneOuterAngle: 360,
-		coneOuterGain: 0.5
+		coneOuterGain: 1
 	};
 
 	const impactRolloff = 0.1;
@@ -24,10 +24,11 @@
 
 	const { impactSounds } = soundData;
 
+	$: impactAudio = [impact1, impact2, impact3];
+
 	useFrame(() => {
 		if (impactSounds.length > 0) {
 			const impactSound = impactSounds.shift();
-			const impactAudio = [impact1, impact2, impact3];
 
 			impactIndex < impactAudio.length - 1 ? impactIndex++ : (impactIndex = 0);
 

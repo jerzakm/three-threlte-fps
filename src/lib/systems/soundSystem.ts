@@ -2,7 +2,8 @@ import type { V3, V3obj } from '$lib/util/types';
 import { useGameData } from './_gameData';
 
 export const soundMap = {
-	impactDefault: '/audio/impact2.mp3'
+	impactDefault: '/audio/impact2.mp3',
+	shot: '/audio/m4shot.mp3'
 };
 
 export type GameSound = {
@@ -19,8 +20,7 @@ export const initSoundSystem = () => {
 	const gameData = useGameData();
 
 	const makeSound = (options: GameSound) => {
-		//
-		console.log('making sound');
+		gameData.soundData.otherSounds.push(options);
 	};
 
 	const update = () => {
