@@ -53,48 +53,13 @@
 
 	const bullets: (Collider | undefined)[] = [];
 
-	useFrame(() => {
-		for (let i = 0; i < bullets.length; i++) {
-			const bullet = bullets[i];
-
-			if (bullet) {
-				world.contactsWith(bullet, (otherCollider) => {
-					bullet.parent()?.setLinvel({ x: 0, y: 0, z: 0 }, true);
-					if (bullets[i] && bullets[i]?.parent()) {
-						const position = bullet.translation();
-						if (position) {
-							const impactAudio = [impact1, impact2, impact3];
-
-							impactIndex < impactAudio.length - 1 ? impactIndex++ : (impactIndex = 0);
-
-							impactAudio[impactIndex].stop();
-
-							impactAudio[impactIndex].parent.position.x = position.x;
-							impactAudio[impactIndex].parent.position.y = position.y;
-							impactAudio[impactIndex].parent.position.z = position.z;
-							impactAudio[impactIndex].play();
-						}
-						//@ts-ignore
-						world.removeRigidBody(bullet.parent());
-						world.removeCollider(bullet, false);
-						bullets[i] = undefined;
-					}
-				});
-			}
-		}
-	});
-
 	let shooting = false;
 
 	let audio1: any;
 	let audio2: any;
 	let audio3: any;
-	let impact1: any;
-	let impact2: any;
-	let impact3: any;
 
 	let shotIndex = 0;
-	let impactIndex = 0;
 
 	const { bulletSystem } = useSystem();
 
@@ -116,24 +81,6 @@
 
 		const { x, y, z } = barrelStart;
 
-		let colliderDesc = rapier.ColliderDesc.ball(0.1);
-		let rigidBodyDesc = new rapier.RigidBodyDesc(rapier.RigidBodyType.Dynamic)
-			.setTranslation(x, y, z)
-			.setLinvel(barrelDirection.x, barrelDirection.y, barrelDirection.z)
-			.setUserData({
-				type: 'bullet'
-			})
-			.setGravityScale(3)
-			.setCanSleep(false)
-			.setCcdEnabled(true);
-
-		// let rigidBody = world.createRigidBody(rigidBodyDesc);
-
-		// let collider = world.createCollider(colliderDesc, rigidBody);
-
-		// collider.setRestitution(0);
-
-		// bullets.push(collider);
 		setTimeout(() => {
 			shooting = false;
 		}, 200);
@@ -165,17 +112,7 @@
 		coneOuterGain: 0.9
 	};
 
-	const impactDirectionalCone = {
-		coneInnerAngle: 360,
-		coneOuterAngle: 360,
-		coneOuterGain: 0.5
-	};
-
-	const impactRolloff = 0.18;
-
 	const shotVolume = 1.7;
-
-	const impactVolume = 3;
 </script>
 
 <svelte:window on:click={handleClick} />
@@ -218,49 +155,4 @@
 	>
 		<!-- <T is={PositionalAudioHelper} args={[ref]} /> -->
 	</PositionalAudio>
-</T.Mesh>
-
-<T.Mesh>
-	<PositionalAudio
-		autostart
-		volume={impactVolume}
-		refDistance={1}
-		src={'/audio/impact2.mp3'}
-		bind:ref={impact1}
-		directionalCone={impactDirectionalCone}
-		rolloffFactor={impactRolloff}
-		let:ref
-	>
-		<T is={PositionalAudioHelper} args={[ref]} />
-	</PositionalAudio>
-</T.Mesh>
-
-<T.Mesh>
-	<PositionalAudio
-		autostart
-		refDistance={1}
-		volume={impactVolume}
-		rolloffFactor={impactRolloff}
-		src={'/audio/impact2.mp3'}
-		bind:ref={impact2}
-		directionalCone={impactDirectionalCone}
-		let:ref
-	>
-		<T is={PositionalAudioHelper} args={[ref]} /></PositionalAudio
-	>
-</T.Mesh>
-
-<T.Mesh>
-	<PositionalAudio
-		autostart
-		refDistance={1}
-		volume={impactVolume}
-		src={'/audio/impact2.mp3'}
-		bind:ref={impact3}
-		directionalCone={impactDirectionalCone}
-		let:ref
-		rolloffFactor={impactRolloff}
-	>
-		<T is={PositionalAudioHelper} args={[ref]} /></PositionalAudio
-	>
 </T.Mesh>
