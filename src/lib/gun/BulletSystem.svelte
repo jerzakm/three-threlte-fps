@@ -40,7 +40,7 @@
 
 <InstancedMesh limit={100} frustumCulled={false}>
 	<T.BoxGeometry args={[bulletSize, bulletSize, bulletSize]} />
-	<T.MeshStandardMaterial side={THREE.DoubleSide} />
+	<T.MeshBasicMaterial color={'#ffffaa'} />
 
 	{#each bulletPositions as b, i}
 		<Instance position={b.position} />

@@ -13,7 +13,7 @@
 
 	onMount(() => {
 		// activeCamera.set('debug');
-		activeCamera.set('eyes');
+		// activeCamera.set('eyes');
 		// activeCamera.set('sights');
 	});
 </script>

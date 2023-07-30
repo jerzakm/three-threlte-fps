@@ -3,7 +3,7 @@
 	import { T, useFrame } from '@threlte/core';
 	import { useRapier } from '@threlte/rapier';
 	import { rendererStores } from '$lib/renderer/rendererStores';
-	import { Quaternion, Vector3, type Group } from 'three';
+	import { Quaternion, Vector3, type Group, PointLight } from 'three';
 	import { DEG2RAD } from 'three/src/math/MathUtils';
 	import { useSystem } from '$lib/systems/_systems';
 	import { soundMap } from '$lib/systems/soundSystem';
@@ -23,6 +23,8 @@
 	export let theta = 0;
 
 	const { rapier, world, colliderEventDispatchers } = useRapier();
+
+	let flashIntensity = 0;
 
 	useFrame(({ clock }) => {
 		if ($eyesCamera) {
@@ -45,8 +47,8 @@
 		// m4.setRotationFromQuaternion(gunQuat);
 	});
 
-	let barrelStart: Vector3;
-	let barrelEnd: Vector3;
+	let barrelStart: Vector3 = new Vector3();
+	let barrelEnd: Vector3 = new Vector3();
 	let barrelDirection = new Vector3();
 
 	let shooting = false;
@@ -56,10 +58,16 @@
 	const shoot = () => {
 		shooting = true;
 		barrelDirection.subVectors(barrelStart, barrelEnd).multiplyScalar(1200);
+		flashIntensity = 2;
 
 		setTimeout(() => {
+			flashIntensity = 0;
 			shooting = false;
 		}, 200);
+
+		setTimeout(() => {
+			flashIntensity = 0;
+		}, 20);
 
 		bulletSystem?.spawnBullet({
 			origin: [barrelStart.x, barrelStart.y, barrelStart.z],
@@ -81,6 +89,7 @@
 	const handleClick = (e: MouseEvent) => {
 		if (e.button === 0) {
 			if (barrelStart && barrelEnd) {
+				barrelStart = barrelStart;
 				shoot();
 			}
 		}
@@ -96,3 +105,17 @@
 <T.Group position={[x, y, z]} rotation.y={-DEG2RAD * 180} scale={0.03}>
 	<M4 bind:ref={m4} bind:startPosition={barrelStart} bind:endPosition={barrelEnd} {shooting} />
 </T.Group>
+
+<T.PointLight
+	intensity={flashIntensity}
+	distance={40}
+	position={barrelStart.toArray()}
+	color={'#aa6622'}
+/>
+
+<T.PointLight
+	intensity={flashIntensity * 0.2}
+	distance={1}
+	position={barrelStart.toArray()}
+	color={'#aacc22'}
+/>
