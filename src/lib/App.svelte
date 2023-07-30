@@ -5,8 +5,10 @@
 	import { KeyboardControls, wasdConfig } from 'svelte-kbc';
 	import Cameras from '$lib/renderer/Cameras.svelte';
 	import Renderer from '$lib/renderer/Renderer.svelte';
+	import GameUi from './ui/GameUi.svelte';
 </script>
 
+<GameUi />
 <KeyboardControls config={wasdConfig()}>
 	<Canvas colorManagementEnabled>
 		<Cameras />
