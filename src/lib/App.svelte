@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Canvas } from '@threlte/core';
 
-	import Scene from '$lib/Scene.svelte';
+	import GameWorld from '$lib/GameWorld.svelte';
 	import { KeyboardControls, wasdConfig } from 'svelte-kbc';
 	import Cameras from '$lib/renderer/Cameras.svelte';
 	import Renderer from '$lib/renderer/Renderer.svelte';
@@ -11,6 +11,6 @@
 	<Canvas colorManagementEnabled>
 		<Cameras />
 		<Renderer />
-		<Scene />
+		<GameWorld />
 	</Canvas>
 </KeyboardControls>
