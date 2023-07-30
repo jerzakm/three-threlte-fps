@@ -53,7 +53,7 @@
 		rolloffFactor={impactRolloff}
 		let:ref
 	>
-		<T is={PositionalAudioHelper} args={[ref]} />
+		<!-- <T is={PositionalAudioHelper} args={[ref]} /> -->
 	</PositionalAudio>
 </T.Mesh>
 
@@ -68,8 +68,8 @@
 		directionalCone={impactDirectionalCone}
 		let:ref
 	>
-		<T is={PositionalAudioHelper} args={[ref]} /></PositionalAudio
-	>
+		<!-- <T is={PositionalAudioHelper} args={[ref]} /> -->
+	</PositionalAudio>
 </T.Mesh>
 
 <T.Mesh>
@@ -83,6 +83,6 @@
 		let:ref
 		rolloffFactor={impactRolloff}
 	>
-		<T is={PositionalAudioHelper} args={[ref]} /></PositionalAudio
-	>
+		<!-- <T is={PositionalAudioHelper} args={[ref]} /> -->
+	</PositionalAudio>
 </T.Mesh>

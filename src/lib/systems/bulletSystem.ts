@@ -35,7 +35,9 @@ export const initBulletSystem = () => {
 		barrelStart.set(...options.origin);
 		barrelEnd.set(...options.target);
 
-		barrelDirection.subVectors(barrelStart, barrelEnd).multiplyScalar(1200);
+		console.log(options.velocity);
+
+		barrelDirection.subVectors(barrelStart, barrelEnd).multiplyScalar(options.velocity);
 		const rigidBodyDesc = new rapier.RigidBodyDesc(rapier.RigidBodyType.Dynamic)
 			.setTranslation(-1000, -1000, -1000)
 			.setLinvel(0, 0, 0)

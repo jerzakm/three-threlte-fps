@@ -3,7 +3,7 @@ import type { BulletPhysics, BulletImpact } from './bulletSystem';
 import type { GameSound } from './soundSystem';
 
 const bulletData: {
-	bulletPhysics: BulletPhysics[];
+	bulletPhysics: (BulletPhysics | undefined)[];
 	bulletImpacts: BulletImpact[];
 } = {
 	bulletPhysics: [],

@@ -12,7 +12,9 @@
 	const { activeCamera } = rendererStores;
 
 	onMount(() => {
+		// activeCamera.set('debug');
 		activeCamera.set('eyes');
+		// activeCamera.set('sights');
 	});
 </script>
 
@@ -62,7 +64,7 @@
 
 		<!-- <Wall scale={0.01} position={[0, 0, -6]} rotation.y={DEG2RAD * -10} /> -->
 
-		{#if true}
+		{#if false}
 			<Debug depthTest={true} depthWrite={true} side={DoubleSide} />
 		{/if}
 	</GameWorld>
