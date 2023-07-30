@@ -23,6 +23,8 @@ Title: M4A1 With Hands And Animations
 	import { cameraStores } from '$lib/renderer/cameraStores';
 	import * as THREE from 'three';
 	import { DEG2RAD } from 'three/src/math/MathUtils';
+	import { draw } from 'svelte/transition';
+	import { useKeyboardControls } from 'svelte-kbc';
 
 	type $$Props = Props<THREE.Group> & {
 		startPosition: THREE.Vector3;
@@ -89,7 +91,6 @@ Title: M4A1 With Hands And Animations
 	const component = forwardEventHandlers();
 
 	let scale = 0.01;
-	$: $actions['h2_skeleton|idle2']?.play();
 
 	const cg = new THREE.SphereGeometry(0.02, 5, 5);
 	const cm = new THREE.MeshBasicMaterial({ color: 'red', wireframe: false });
@@ -131,6 +132,12 @@ Title: M4A1 With Hands And Animations
 		}
 	}
 
+	const { scopeToggle } = useKeyboardControls();
+
+	let x2 = false;
+	let silencer = false;
+	let gunDrawn = false;
+
 	const shootAnimation = (shooting: boolean) => {
 		if (shooting) {
 			$actions['h2_skeleton|fire11']?.reset();
@@ -141,6 +148,49 @@ Title: M4A1 With Hands And Animations
 	};
 
 	$: shootAnimation(shooting);
+	// $: $actions['h2_skeleton|idle2']?.play();
+
+	const idleAnim = () => {
+		if (x2) {
+			$actions['h2_skeleton|idle']?.play();
+		} else {
+			$actions['h2_skeleton|idle2']?.play();
+		}
+	};
+
+	const drawAnimation = (isDrawn: boolean) => {
+		if (!isDrawn) {
+			gunDrawn = true;
+			if (x2) {
+				$actions['h2_skeleton|draw']?.reset().setLoop(THREE.LoopRepeat, 1).play();
+			} else {
+				$actions['h2_skeleton|draw2']?.reset().setLoop(THREE.LoopRepeat, 1).play();
+			}
+			idleAnim();
+		}
+	};
+
+	const swapScope = (swapScopeToggle: boolean) => {
+		if (swapScopeToggle) {
+			if (x2) {
+				$actions['h2_skeleton|ss2']?.reset().setLoop(THREE.LoopRepeat, 1).play();
+			} else {
+				$actions['h2_skeleton|ss']?.reset().setLoop(THREE.LoopRepeat, 1).play();
+			}
+			x2 = !x2;
+			idleAnim();
+		}
+	};
+
+	$: swapScope($scopeToggle);
+
+	const reloadAnimation = () => {};
+
+	$: {
+		if (initialized && $actions['h2_skeleton|draw']) {
+			drawAnimation(gunDrawn);
+		}
+	}
 
 	export let startPosition = new THREE.Vector3();
 	export let endPosition = new THREE.Vector3();
@@ -188,15 +238,9 @@ Title: M4A1 With Hands And Animations
 			});
 		}
 	}
-
-	const map = useTexture('/sprites/eotechHolo.png');
-
-	const eotechHoloSights = new THREE.MeshStandardMaterial({
-		map: $map
-	});
 </script>
 
-<T is={ref} dispose={false} {...$$restProps} bind:this={$component}>
+<T is={ref} dispose={false} {...$$restProps} bind:this={$component} visible={gunDrawn}>
 	{#await gltf}
 		<slot name="fallback" />
 	{:then gltf}

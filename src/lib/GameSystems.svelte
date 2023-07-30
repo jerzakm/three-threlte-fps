@@ -6,15 +6,18 @@
 	import { gameData } from '$lib/systems/_gameData';
 	import SoundSystem from '$lib/sounds/SoundSystem.svelte';
 	import BulletSystem from '$lib/gun/BulletSystem.svelte';
+	import type { GameSystems } from './systems/_systems';
+	import { initGunSystem } from './systems/gunSystem';
 
 	setContext('game-data-ctx', gameData);
 
-	const systems = {
+	const systems: GameSystems = {
 		bulletSystem: initBulletSystem(),
-		soundSystem: initSoundSystem()
+		soundSystem: initSoundSystem(),
+		gunSystem: initGunSystem()
 	};
 
-	setContext('game-systems-ctx', systems);
+	setContext<GameSystems>('game-systems-ctx', systems);
 
 	useFrame(() => {
 		systems.bulletSystem.update();

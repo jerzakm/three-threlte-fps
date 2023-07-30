@@ -12,7 +12,7 @@
 
 	const { playerPosition } = playerStores;
 
-	const { w, a, s, d, shift, space } = useKeyboardControls();
+	const { left, right, forward, back, run } = useKeyboardControls();
 
 	const RUN_SPEED = 4;
 	const WALK_SPEED = 2;
@@ -84,35 +84,35 @@
 		$eyesQuat.copy(cameraQuaternion);
 
 		playerStores.strafing.set(0);
-		if ($w || $a || $s || $d) {
+		if ($left || $right || $forward || $back) {
 			let speed = 0.05;
 
-			let strafe = 0;
-			let forward = 0;
+			let s = 0;
+			let f = 0;
 
-			if ($shift) {
+			if ($run) {
 				speed = RUN_SPEED;
 			} else speed = WALK_SPEED;
 
-			if ($w) {
-				forward -= speed;
+			if ($forward) {
+				f -= speed;
 			}
-			if ($s) {
-				forward += speed;
+			if ($back) {
+				f += speed;
 			}
 
-			if ($a) {
-				strafe -= speed;
+			if ($left) {
+				s -= speed;
 				playerStores.strafing.set(-1);
 			}
 
-			if ($d) {
-				strafe += speed;
+			if ($right) {
+				s += speed;
 
 				playerStores.strafing.set(1);
 			}
 
-			const direction = new Vector3(strafe, 0, forward);
+			const direction = new Vector3(s, 0, f);
 
 			direction.applyQuaternion($eyesCamera.quaternion);
 

@@ -6,10 +6,23 @@
 	import Cameras from '$lib/renderer/Cameras.svelte';
 	import Renderer from '$lib/renderer/Renderer.svelte';
 	import GameUi from './ui/GameUi.svelte';
+
+	const config = [
+		// individual key presses
+		{ name: 'forward', keys: ['ArrowUp', 'w', 'W'] },
+		{ name: 'back', keys: ['ArrowDown', 's', 'S'] },
+		{ name: 'left', keys: ['ArrowLeft', 'a', 'A'] },
+		{ name: 'right', keys: ['ArrowRight', 'd', 'D'] },
+		{ name: 'run', keys: ['Shift'] },
+		{ name: 'scopeToggle', keys: ['t', 'T'] },
+		{ name: 'reload', keys: ['r', 'R'] },
+		{ name: 'leanLeft', keys: ['q', 'Q'] },
+		{ name: 'leanRight', keys: ['e', 'E'] }
+	];
 </script>
 
 <GameUi />
-<KeyboardControls config={wasdConfig()}>
+<KeyboardControls {config}>
 	<Canvas colorManagementEnabled>
 		<Cameras />
 		<Renderer />

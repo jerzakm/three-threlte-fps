@@ -4,7 +4,7 @@
 
 	import Player from '$lib/player/Player.svelte';
 	import { AutoColliders, Debug, World } from '@threlte/rapier';
-	import { DoubleSide } from 'three';
+	import { AmbientLight, DoubleSide, HemisphereLight } from 'three';
 	import { onMount } from 'svelte';
 	import { rendererStores } from './renderer/rendererStores';
 	import GameSystems from './GameSystems.svelte';
@@ -18,17 +18,21 @@
 	});
 </script>
 
-<Environment files={'spaichingen_hill_1k.hdr'} />
+<!-- <Environment files={'spaichingen_hill_1k.hdr'} /> -->
 
-<Grid
+<!-- <Grid
 	position.y={0.1}
 	cellColor="#ffaa00"
-	sectionColor="#00000"
+	sectionColor="#000000"
 	sectionThickness={0}
 	fadeDistance={40}
 	cellSize={1}
 	gridSize={[200, 200]}
-/>
+/> -->
+
+<T.AmbientLight intensity={0.4} />
+
+<T.HemisphereLight color={'white'} intensity={0.1} />
 
 <World>
 	<GameSystems>
@@ -36,18 +40,14 @@
 		<AutoColliders>
 			<T.Mesh>
 				<T.BoxGeometry args={[100, 0.05, 100]} />
-				<T.MeshStandardMaterial color="#121212" transparent opacity={0} />
-			</T.Mesh>
-			<T.Mesh position.x={20} position.z={-50} position.y={2}>
-				<T.BoxGeometry args={[4, 4, 4]} />
-				<T.MeshStandardMaterial color="#444444" />
+				<T.MeshStandardMaterial color="#121212" />
 			</T.Mesh>
 		</AutoColliders>
 
 		<AutoColliders>
 			<T.Mesh position.z={-25} position.y={2}>
 				<T.BoxGeometry args={[4, 4, 4]} />
-				<T.MeshStandardMaterial color="#444444" wireframe />
+				<T.MeshStandardMaterial color="#444444" />
 			</T.Mesh>
 		</AutoColliders>
 
@@ -56,7 +56,7 @@
 				<AutoColliders restitution={0}>
 					<T.Mesh position.x={(x - 5) * 20 + 3} position.z={(z - 5) * 50 + 5} position.y={2}>
 						<T.BoxGeometry args={[4, 4, 4]} />
-						<T.MeshStandardMaterial color="#444444" wireframe />
+						<T.MeshStandardMaterial color="#444444" />
 					</T.Mesh>
 				</AutoColliders>
 			{/each}

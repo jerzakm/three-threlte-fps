@@ -26,7 +26,7 @@
 		<!--  -->
 		<div class="flex pr-10 items-center">
 			{#each { length: 30 } as a, x}
-				<img src="/ui/ammoOutlined.svg" class="h-16 -mx-6" alt="bullet" />
+				<!-- <img src="/ui/ammoOutlined.svg" class="h-16 -mx-6" alt="bullet" /> -->
 			{/each}
 			<span class="ammoCount text-4xl">{$bulletCount.current}/{$bulletCount.max}</span>
 		</div>

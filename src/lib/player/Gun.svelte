@@ -108,14 +108,14 @@
 
 <T.PointLight
 	intensity={flashIntensity}
-	distance={40}
-	position={barrelStart.toArray()}
+	distance={80}
+	position={[barrelStart.x, barrelStart.y, barrelStart.z]}
 	color={'#aa6622'}
 />
 
 <T.PointLight
 	intensity={flashIntensity * 0.2}
 	distance={1}
-	position={barrelStart.toArray()}
+	position={[barrelStart.x, barrelStart.y + 0.5, barrelStart.z]}
 	color={'#aacc22'}
 />
