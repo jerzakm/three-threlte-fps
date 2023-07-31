@@ -7,6 +7,7 @@
 	import { DEG2RAD } from 'three/src/math/MathUtils';
 	import { useSystem } from '$lib/systems/_systems';
 	import { soundMap } from '$lib/systems/soundSystem';
+	import { tweened } from 'svelte/motion';
 
 	const { eyesCamera, activeCamera } = rendererStores;
 
@@ -23,8 +24,6 @@
 	export let theta = 0;
 
 	const { rapier, world, colliderEventDispatchers } = useRapier();
-
-	let flashIntensity = 0;
 
 	useFrame(({ clock }) => {
 		if ($eyesCamera) {
@@ -55,17 +54,17 @@
 
 	const { bulletSystem, soundSystem } = useSystem();
 
+	const flashIntensity = tweened(0);
+
 	const shoot = () => {
 		barrelDirection.subVectors(barrelStart, barrelEnd).multiplyScalar(1200);
-		flashIntensity = 2;
+		flashIntensity.set(2, { duration: 0 });
 
 		setTimeout(() => {
-			flashIntensity = 0;
-		}, 200);
-
-		setTimeout(() => {
-			flashIntensity = 0;
+			flashIntensity.set(0, { duration: 50 });
 		}, 20);
+
+		barrelStart = barrelStart;
 
 		bulletSystem?.spawnBullet({
 			origin: [barrelStart.x, barrelStart.y, barrelStart.z],
@@ -116,7 +115,6 @@
 	useFrame(({ clock }) => {
 		const time = clock.getElapsedTime();
 		const sinceLastShot = time - lastShot;
-		console.log({ shooting, sinceLastShot });
 		if (shooting && sinceLastShot > shotDelay) {
 			shoot();
 			lastShot = time * 1;
@@ -131,14 +129,14 @@
 </T.Group>
 
 <T.PointLight
-	intensity={flashIntensity}
+	intensity={$flashIntensity}
 	distance={80}
 	position={[barrelStart.x, barrelStart.y, barrelStart.z]}
 	color={'#aa6622'}
 />
 
 <T.PointLight
-	intensity={flashIntensity * 0.2}
+	intensity={$flashIntensity * 0.2}
 	distance={1}
 	position={[barrelStart.x, barrelStart.y + 0.5, barrelStart.z]}
 	color={'#aacc22'}
