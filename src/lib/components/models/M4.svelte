@@ -147,38 +147,71 @@ Title: M4A1 With Hands And Animations
 		}
 	};
 
-	$: shootAnimation(shooting);
+	$: a = {
+		idle: $actions['h2_skeleton|idle'],
+		idle2: $actions['h2_skeleton|idle2'],
+		ss: $actions['h2_skeleton|ss'],
+		ss2: $actions['h2_skeleton|ss2']
+	};
+
+	// $: shootAnimation(shooting);
 	// $: $actions['h2_skeleton|idle2']?.play();
+
+	$: console.log(a.ss);
+
+	const playAnim = (
+		animationName: keyof typeof a,
+		options = {
+			repeat: 0,
+			duration: 0
+		}
+	) => {
+		Object.values(a).map((anim) => {
+			anim?.stop();
+			anim?.reset();
+		});
+		const animation = a[animationName];
+		console.log(a.idle);
+		if (!animation) return;
+
+		if (options.repeat > 0) animation.setLoop(THREE.LoopRepeat, 1);
+		if (options.duration > 0) animation.setDuration(options.duration);
+		animation.play();
+	};
 
 	const idleAnim = () => {
 		if (x2) {
-			$actions['h2_skeleton|idle']?.play();
+			playAnim('idle2');
 		} else {
-			$actions['h2_skeleton|idle2']?.play();
+			playAnim('idle');
 		}
 	};
 
 	const drawAnimation = (isDrawn: boolean) => {
 		if (!isDrawn) {
 			gunDrawn = true;
-			if (x2) {
-				$actions['h2_skeleton|draw']?.reset().setLoop(THREE.LoopRepeat, 1).play();
-			} else {
-				$actions['h2_skeleton|draw2']?.reset().setLoop(THREE.LoopRepeat, 1).play();
-			}
+			// if (x2) {
+			// 	$actions['h2_skeleton|draw']?.reset().setLoop(THREE.LoopRepeat, 1).play();
+			// } else {
+			// 	$actions['h2_skeleton|draw2']?.reset().setLoop(THREE.LoopRepeat, 1).play();
+			// }
 			idleAnim();
 		}
 	};
 
 	const swapScope = (swapScopeToggle: boolean) => {
+		const duration = 4;
 		if (swapScopeToggle) {
+			const options = { duration, repeat: 1 };
 			if (x2) {
-				$actions['h2_skeleton|ss2']?.reset().setLoop(THREE.LoopRepeat, 1).play();
+				playAnim('ss', options);
 			} else {
-				$actions['h2_skeleton|ss']?.reset().setLoop(THREE.LoopRepeat, 1).play();
+				playAnim('ss2', options);
 			}
 			x2 = !x2;
-			idleAnim();
+			setTimeout(() => {
+				idleAnim();
+			}, duration * 1000);
 		}
 	};
 
