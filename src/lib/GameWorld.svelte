@@ -18,17 +18,17 @@
 	});
 </script>
 
-<!-- <Environment files={'spaichingen_hill_1k.hdr'} /> -->
+<Environment files={'spaichingen_hill_1k.hdr'} />
 
-<!-- <Grid
-	position.y={0.1}
+<Grid
+	position.y={0.09}
 	cellColor="#ffaa00"
 	sectionColor="#000000"
 	sectionThickness={0}
-	fadeDistance={40}
+	fadeDistance={20}
 	cellSize={1}
 	gridSize={[200, 200]}
-/> -->
+/>
 
 <T.AmbientLight intensity={0.4} />
 

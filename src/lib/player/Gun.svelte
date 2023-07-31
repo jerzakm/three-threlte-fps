@@ -56,13 +56,11 @@
 	const { bulletSystem, soundSystem } = useSystem();
 
 	const shoot = () => {
-		shooting = true;
 		barrelDirection.subVectors(barrelStart, barrelEnd).multiplyScalar(1200);
 		flashIntensity = 2;
 
 		setTimeout(() => {
 			flashIntensity = 0;
-			shooting = false;
 		}, 200);
 
 		setTimeout(() => {
@@ -86,11 +84,11 @@
 		});
 	};
 
-	const handleClick = (e: MouseEvent) => {
+	const mouseDown = (e: MouseEvent) => {
 		if (e.button === 0) {
 			if (barrelStart && barrelEnd) {
 				barrelStart = barrelStart;
-				shoot();
+				shooting = true;
 			}
 		}
 
@@ -98,9 +96,35 @@
 			$activeCamera === 'eyes' ? activeCamera.set('sights') : activeCamera.set('eyes');
 		}
 	};
+
+	const mouseUp = (e: MouseEvent) => {
+		if (e.button === 0) {
+			if (barrelStart && barrelEnd) {
+				shooting = false;
+			}
+		}
+
+		if (e.button === 2) {
+			$activeCamera === 'eyes' ? activeCamera.set('sights') : activeCamera.set('eyes');
+		}
+	};
+
+	let lastShot = 0;
+
+	const shotDelay = 60 / 700;
+
+	useFrame(({ clock }) => {
+		const time = clock.getElapsedTime();
+		const sinceLastShot = time - lastShot;
+		console.log({ shooting, sinceLastShot });
+		if (shooting && sinceLastShot > shotDelay) {
+			shoot();
+			lastShot = time * 1;
+		}
+	});
 </script>
 
-<svelte:window on:click={handleClick} />
+<svelte:window on:mousedown={mouseDown} on:mouseup={mouseUp} />
 
 <T.Group position={[x, y, z]} rotation.y={-DEG2RAD * 180} scale={0.03}>
 	<M4 bind:ref={m4} bind:startPosition={barrelStart} bind:endPosition={barrelEnd} {shooting} />
