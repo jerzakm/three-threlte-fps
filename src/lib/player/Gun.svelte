@@ -51,6 +51,7 @@
 	let barrelDirection = new Vector3();
 
 	let shooting = false;
+	let shotPulse = false;
 
 	const { bulletSystem, soundSystem } = useSystem();
 
@@ -59,7 +60,7 @@
 	const shoot = () => {
 		barrelDirection.subVectors(barrelStart, barrelEnd).multiplyScalar(1200);
 		flashIntensity.set(2, { duration: 0 });
-
+		shotPulse = true;
 		setTimeout(() => {
 			flashIntensity.set(0, { duration: 50 });
 		}, 20);
@@ -115,7 +116,9 @@
 	useFrame(({ clock }) => {
 		const time = clock.getElapsedTime();
 		const sinceLastShot = time - lastShot;
+		shotPulse = false;
 		if (shooting && sinceLastShot > shotDelay) {
+			shotPulse = true;
 			shoot();
 			lastShot = time * 1;
 		}
@@ -125,7 +128,12 @@
 <svelte:window on:mousedown={mouseDown} on:mouseup={mouseUp} />
 
 <T.Group position={[x, y, z]} rotation.y={-DEG2RAD * 180} scale={0.03}>
-	<M4 bind:ref={m4} bind:startPosition={barrelStart} bind:endPosition={barrelEnd} {shooting} />
+	<M4
+		bind:ref={m4}
+		bind:startPosition={barrelStart}
+		bind:endPosition={barrelEnd}
+		shooting={shotPulse}
+	/>
 </T.Group>
 
 <T.PointLight

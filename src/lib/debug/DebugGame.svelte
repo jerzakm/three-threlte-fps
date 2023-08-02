@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { useKeyboardControls } from 'svelte-kbc';
 	import { debugStores } from './debugStores';
-	import { Sheet, Studio, SheetObject } from '@threlte/theatre';
+	import { Studio, SheetObject } from '@threlte/theatre';
 	import { Debug } from '@threlte/rapier';
 
 	const { debugActive } = debugStores;
