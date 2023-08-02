@@ -132,16 +132,22 @@ Title: M4A1 With Hands And Animations
 		}
 	}
 
-	const { scopeToggle } = useKeyboardControls();
+	const { scopeToggle, reload } = useKeyboardControls();
 
 	let x2 = false;
 	let silencer = false;
-	let gunDrawn = false;
+	let gunDrawn = true;
+	$: console.log({ x2, reloading, swappingScope, shooting, gunDrawn });
+
+	$: shootAnimation(shooting);
 
 	const shootAnimation = (shooting: boolean) => {
 		if (shooting) {
 			$actions['h2_skeleton|fire11']?.reset();
-			$actions['h2_skeleton|fire11']?.setLoop(THREE.LoopRepeat, 1).play();
+			$actions['h2_skeleton|fire11']?.setLoop(THREE.LoopRepeat, 1).setEffectiveTimeScale(1).play();
+			setTimeout(() => {
+				console.log($sightsPosition);
+			}, 5);
 		} else {
 			$actions['h2_skeleton|idle2']?.play();
 		}
@@ -151,13 +157,12 @@ Title: M4A1 With Hands And Animations
 		idle: $actions['h2_skeleton|idle'],
 		idle2: $actions['h2_skeleton|idle2'],
 		ss: $actions['h2_skeleton|ss'],
-		ss2: $actions['h2_skeleton|ss2']
+		ss2: $actions['h2_skeleton|ss2'],
+		reload: $actions['h2_skeleton|reload'],
+		reload2: $actions['h2_skeleton|reload2'],
+		draw: $actions['h2_skeleton|draw'],
+		draw2: $actions['h2_skeleton|draw2']
 	};
-
-	// $: shootAnimation(shooting);
-	// $: $actions['h2_skeleton|idle2']?.play();
-
-	$: console.log(a.ss);
 
 	const playAnim = (
 		animationName: keyof typeof a,
@@ -171,7 +176,6 @@ Title: M4A1 With Hands And Animations
 			anim?.reset();
 		});
 		const animation = a[animationName];
-		console.log(a.idle);
 		if (!animation) return;
 
 		if (options.repeat > 0) animation.setLoop(THREE.LoopRepeat, 1);
@@ -181,35 +185,30 @@ Title: M4A1 With Hands And Animations
 
 	const idleAnim = () => {
 		if (x2) {
-			playAnim('idle2');
-		} else {
 			playAnim('idle');
+		} else {
+			playAnim('idle2');
 		}
 	};
 
-	const drawAnimation = (isDrawn: boolean) => {
-		if (!isDrawn) {
-			gunDrawn = true;
-			// if (x2) {
-			// 	$actions['h2_skeleton|draw']?.reset().setLoop(THREE.LoopRepeat, 1).play();
-			// } else {
-			// 	$actions['h2_skeleton|draw2']?.reset().setLoop(THREE.LoopRepeat, 1).play();
-			// }
-			idleAnim();
-		}
-	};
+	let reloading = false;
+	let swappingScope = false;
 
 	const swapScope = (swapScopeToggle: boolean) => {
 		const duration = 4;
-		if (swapScopeToggle) {
+
+		const canSwap = !shooting && !reloading && gunDrawn && !swappingScope;
+		if (swapScopeToggle && canSwap) {
+			swappingScope = true;
 			const options = { duration, repeat: 1 };
 			if (x2) {
-				playAnim('ss', options);
-			} else {
 				playAnim('ss2', options);
+			} else {
+				playAnim('ss', options);
 			}
 			x2 = !x2;
 			setTimeout(() => {
+				swappingScope = false;
 				idleAnim();
 			}, duration * 1000);
 		}
@@ -217,11 +216,29 @@ Title: M4A1 With Hands And Animations
 
 	$: swapScope($scopeToggle);
 
-	const reloadAnimation = () => {};
+	$: reloadAnimation($reload);
+	const reloadAnimation = (reload: boolean) => {
+		const duration = 4;
+
+		const canReload = !shooting && !reloading && gunDrawn && !swappingScope;
+		if (reload && canReload) {
+			reloading = true;
+			const options = { duration, repeat: 1 };
+			if (x2) {
+				playAnim('reload', options);
+			} else {
+				playAnim('reload2', options);
+			}
+			setTimeout(() => {
+				reloading = false;
+				idleAnim();
+			}, duration * 1000);
+		}
+	};
 
 	$: {
-		if (initialized && $actions['h2_skeleton|draw']) {
-			drawAnimation(gunDrawn);
+		if (a.idle && a.idle2) {
+			idleAnim();
 		}
 	}
 
@@ -260,20 +277,20 @@ Title: M4A1 With Hands And Animations
 		if ($activeCamera === 'eyes') {
 			cameraSwapTween.set(0, {
 				easing: quadInOut,
-				duration: 200
+				duration: 0
 			});
 		}
 
 		if ($activeCamera === 'sights') {
 			cameraSwapTween.set(1, {
 				easing: quadInOut,
-				duration: 200
+				duration: 0
 			});
 		}
 	}
 </script>
 
-<T is={ref} dispose={false} {...$$restProps} bind:this={$component} visible={gunDrawn}>
+<T is={ref} dispose={false} {...$$restProps} bind:this={$component}>
 	{#await gltf}
 		<slot name="fallback" />
 	{:then gltf}
