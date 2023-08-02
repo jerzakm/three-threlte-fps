@@ -8,8 +8,13 @@
 	import { onMount } from 'svelte';
 	import { rendererStores } from './renderer/rendererStores';
 	import GameSystems from './GameSystems.svelte';
+	import { Sheet, SheetObject } from '@threlte/theatre';
+	import { debugStores } from './debug/debugStores';
+	import DebugGame from './debug/DebugGame.svelte';
 
 	const { activeCamera } = rendererStores;
+
+	const { debugActive } = debugStores;
 
 	onMount(() => {
 		// activeCamera.set('debug');
@@ -62,10 +67,6 @@
 			{/each}
 		{/each}
 
-		<!-- <Wall scale={0.01} position={[0, 0, -6]} rotation.y={DEG2RAD * -10} /> -->
-
-		{#if false}
-			<Debug depthTest={true} depthWrite={true} side={DoubleSide} />
-		{/if}
+		<DebugGame />
 	</GameSystems>
 </World>
