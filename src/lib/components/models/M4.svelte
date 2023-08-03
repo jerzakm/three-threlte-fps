@@ -142,7 +142,7 @@ Title: M4A1 With Hands And Animations
 
 	const { scopeToggle, reload } = useKeyboardControls();
 
-	let x2 = true;
+	let x2 = false;
 	let silencer = false;
 	let gunDrawn = true;
 
