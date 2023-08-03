@@ -35,7 +35,7 @@
 		}
 	});
 
-	const bulletSize = 0.05;
+	const bulletSize = 0.1;
 </script>
 
 <InstancedMesh limit={100} frustumCulled={false}>
