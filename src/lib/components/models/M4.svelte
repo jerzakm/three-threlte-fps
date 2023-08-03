@@ -18,19 +18,14 @@ Title: M4A1 With Hands And Animations
 	} from '@threlte/core';
 	import { useGltf, useGltfAnimations, useTexture } from '@threlte/extras';
 	import { rendererStores } from '$lib/renderer/rendererStores';
+	import { cameraStores } from '$lib/renderer/cameraStores';
 	import { tweened } from 'svelte/motion';
 	import { quadInOut } from 'svelte/easing';
-	import { cameraStores } from '$lib/renderer/cameraStores';
 	import * as THREE from 'three';
 	import { DEG2RAD } from 'three/src/math/MathUtils';
-	import { draw } from 'svelte/transition';
 	import { useKeyboardControls } from 'svelte-kbc';
 	import { gunStores } from '$lib/gun/gunStores';
-
-	import fs from '$lib/shaders/x2_f.glsl?raw';
-	import vs from '$lib/shaders/scope_v.glsl?raw';
-	import { DoubleSide } from 'three';
-	import { onMount } from 'svelte';
+	import ScopeShaderMaterial from '$lib/shaders/ScopeShaderMaterial.svelte';
 
 	type $$Props = Props<THREE.Group> & {
 		startPosition: THREE.Vector3;
@@ -276,98 +271,6 @@ Title: M4A1 With Hands And Animations
 
 	const sightsRotationHelper = new THREE.Mesh();
 
-	// const x2material = new THREE.MeshBasicMaterial({
-	// 	color: 'white'
-	// });
-
-	// const x2material = new THREE.ShaderMaterial({
-	// 	fragmentShader: fs,
-	// 	vertexShader: vs,
-	// 	side: THREE.DoubleSide
-	// });
-
-	let x2material: any;
-
-	const x2reticle = useTexture('/sprites/eotechHolo.png');
-
-	let CustomShaderMaterial: any;
-
-	onMount(async () => {
-		const d = await import('three-custom-shader-material/vanilla');
-		CustomShaderMaterial = d.default;
-	});
-
-	$: {
-		if ($sightsRenderTarget && $x2reticle && CustomShaderMaterial) {
-			// x2material.needsUpdate = true;
-			x2material = new CustomShaderMaterial({
-				baseMaterial: THREE.MeshBasicMaterial,
-				map: $sightsRenderTarget.texture,
-
-				uniforms: {
-					sight: { value: $x2reticle },
-					scene: { value: $sightsRenderTarget.texture }
-				},
-				vertexShader: `
-        varying vec2 custom_vUv;
-
-        void main() {
-          custom_vUv = uv;
-        }
-    `,
-				fragmentShader: `
-
-        varying vec2 custom_vUv;
-        uniform sampler2D sight;
-        uniform sampler2D scene;
-
-        vec2 computeUV( vec2 uv, float k, float kcube ){
-    
-          vec2 t = uv - .5;
-          float r2 = t.x * t.x + t.y * t.y;
-          float f = 0.;
-          
-          if( kcube == 0.0){
-              f = 1. + r2 * k;
-          }else{
-              f = 1. + r2 * ( k + kcube * sqrt( r2 ) );
-          }
-          
-          vec2 nUv = f * t + .5;
-        
-      
-          return nUv;
-          
-        }
-
-        void main() {
-          vec4 original = csm_DiffuseColor;
-
-          vec2 rUv = custom_vUv * 3.;
-          vec4 reticle = texture2D(sight, vec2(rUv.x -1., 2.-rUv.y))*2.;
-
-          vec2 sUv = custom_vUv;
-          vec4 s = texture2D(scene, sUv);
-
-          float k = -0.4 ;
-          float kcube = 1.4;    
-          float offset = .12;
-
-
-          float red = texture2D( scene, computeUV( sUv, k + offset, kcube ) ).r*1.4; 
-          float green = texture2D( scene, computeUV( sUv, k, kcube ) ).g*1.4; 
-          float blue = texture2D( scene, computeUV( sUv, k - offset, kcube ) ).b*1.4; 
-
-          vec4 cubed = vec4(red,green,blue, 1.);
-                    
-          csm_DiffuseColor = cubed;
-          csm_DiffuseColor.r = mix(cubed.r, reticle.r, reticle.a);
-        }
-    `
-			});
-		}
-	}
-
 	useFrame(({ clock }) => {
 		// x2material.needsUpdate = true;
 		bStartMesh.getWorldPosition(startPosition);
@@ -541,10 +444,12 @@ Title: M4A1 With Hands And Animations
 									<T.SkinnedMesh
 										name="viewer_2x"
 										geometry={gltf.nodes.Object_18.geometry}
-										material={x2material}
 										skeleton={gltf.nodes.Object_18.skeleton}
 										frustumCulled={false}
-									/>
+									>
+										<T.MeshBasicMaterial color="yellow" />
+										<ScopeShaderMaterial />
+									</T.SkinnedMesh>
 									<T.SkinnedMesh
 										name="gun"
 										geometry={gltf.nodes.Object_19.geometry}
