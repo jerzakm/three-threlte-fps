@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Collider as RCollider, RigidBody as RRigidBody } from '@dimforge/rapier3d-compat';
-	import Gun from './Gun.svelte';
+	import Gun from '$lib/gun/Gun.svelte';
 
 	import { T, useFrame } from '@threlte/core';
 	import { Collider, RigidBody, useRapier } from '@threlte/rapier';
@@ -14,8 +14,8 @@
 
 	const { left, right, forward, back, run } = useKeyboardControls();
 
-	const RUN_SPEED = 4;
-	const WALK_SPEED = 2;
+	const RUN_SPEED = 9;
+	const WALK_SPEED = 3;
 
 	function clamp(number: number, min: number, max: number) {
 		return Math.max(min, Math.min(number, max));
@@ -99,19 +99,19 @@
 			} else speed = WALK_SPEED;
 
 			if ($forward) {
-				f -= speed;
+				f -= 1;
 			}
 			if ($back) {
-				f += speed;
+				f += 1;
 			}
 
 			if ($left) {
-				s -= speed;
+				s -= 1;
 				playerStores.strafing.set(-1);
 			}
 
 			if ($right) {
-				s += speed;
+				s += 1;
 
 				playerStores.strafing.set(1);
 			}
@@ -119,8 +119,8 @@
 			const direction = new Vector3(s, 0, f);
 
 			direction.applyQuaternion($eyesCamera.quaternion);
-
 			direction.setY(0);
+			direction.normalize().multiplyScalar(speed);
 			characterController.computeColliderMovement(
 				playerCollider, // The collider we would like to move.
 				{ x: 0, y: 0, z: 0 } // The movement we would like to apply if there wasn’t any obstacle.
@@ -145,7 +145,7 @@
 </script>
 
 <T.Group position={[0, 0.5, 0]}>
-	<RigidBody bind:rigidBody={playerBody} linearDamping={0} gravityScale={1}>
+	<RigidBody bind:rigidBody={playerBody} linearDamping={5} gravityScale={1}>
 		<T.Mesh>
 			<T.CylinderGeometry args={[0.2, 0.2, 0.8]} />
 			<T.MeshStandardMaterial color={'red'} />
