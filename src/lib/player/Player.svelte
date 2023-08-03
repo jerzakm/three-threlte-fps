@@ -9,8 +9,15 @@
 	import { rendererStores } from '$lib/renderer/rendererStores';
 	import { cameraStores } from '$lib/renderer/cameraStores';
 	import { playerStores } from './playerStores';
+	import { gunStores } from '$lib/gun/gunStores';
+	import { useSystem } from '$lib/systems/_systems';
+	import { writable } from 'svelte/store';
+	import { useGameData } from '$lib/systems/_gameData';
 
 	const { playerPosition } = playerStores;
+
+	const { gunSystem } = useSystem();
+	const { recoil } = useGameData().gunData;
 
 	const { left, right, forward, back, run } = useKeyboardControls();
 
@@ -20,8 +27,6 @@
 	function clamp(number: number, min: number, max: number) {
 		return Math.max(min, Math.min(number, max));
 	}
-
-	let recoil: any;
 
 	let playerCollider: RCollider;
 	let playerBody: RRigidBody;
@@ -61,16 +66,15 @@
 	let guntheta = 0;
 
 	const { eyesCamera } = rendererStores;
-	const { eyesPosition, eyesQuat, sightsPosition2 } = cameraStores;
+	const { eyesPosition, eyesQuat } = cameraStores;
 
-	useFrame(({ clock }) => {
+	useFrame(() => {
 		if (!$eyesCamera) return;
 		if (!recoil) return;
 
 		phi += mouseMove.x * mouseSensitivity + $recoil.x;
 		theta = clamp(theta - mouseMove.y * mouseSensitivity + $recoil.y, -Math.PI / 3, Math.PI / 3);
-		gunphi = phi * 1;
-		guntheta = theta * 1;
+		gunSystem.setGunOrientation(theta, phi);
 		const qx = new Quaternion();
 		qx.setFromAxisAngle(new Vector3(0, -1, 0), phi);
 
@@ -138,8 +142,6 @@
 		});
 
 		$eyesCamera.position.set(translation.x, translation.y + 1.9, translation.z);
-
-		// $sightsPosition2.copy($eyesCamera.position);
 		$eyesPosition.copy($eyesCamera.position);
 	});
 </script>
@@ -154,4 +156,4 @@
 	</RigidBody>
 </T.Group>
 
-<Gun phi={gunphi} theta={guntheta} bind:recoil />
+<!-- <Gun phi={gunphi} theta={guntheta} bind:recoil /> -->

@@ -1,18 +1,17 @@
 <script lang="ts">
 	import M4 from '$lib/components/models/M4.svelte';
 	import { T, useFrame } from '@threlte/core';
-	import { useRapier } from '@threlte/rapier';
 	import { rendererStores } from '$lib/renderer/rendererStores';
 	import { Quaternion, Vector3, type Group, PointLight } from 'three';
 	import { DEG2RAD } from 'three/src/math/MathUtils';
 	import { useSystem } from '$lib/systems/_systems';
 	import { soundMap } from '$lib/systems/soundSystem';
 	import { tweened } from 'svelte/motion';
+	import { useGameData } from '$lib/systems/_gameData';
 
 	const { eyesCamera, activeCamera } = rendererStores;
 
 	let m4: Group;
-	export let recoil = tweened({ x: 0, y: 0 });
 
 	//https://www.youtube.com/watch?v=zc_8QMltpnU&ab_channel=Ish%27sTacticalSolutions
 	// https://www.youtube.com/watch?v=DuS9XnY-IRA&ab_channel=ColionNoir
@@ -21,10 +20,7 @@
 	let y = 0;
 	let z = 0;
 
-	export let phi = 0;
-	export let theta = 0;
-
-	const { rapier, world, colliderEventDispatchers } = useRapier();
+	const { gunData } = useGameData();
 
 	useFrame(({ clock }) => {
 		if ($eyesCamera) {
@@ -32,6 +28,8 @@
 			y = $eyesCamera.position.y;
 			z = $eyesCamera.position.z;
 		}
+
+		const { phi, theta } = gunData.orientation;
 
 		const qx = new Quaternion();
 		qx.setFromAxisAngle(new Vector3(0, -1, 0), phi);
@@ -44,7 +42,6 @@
 		gunQuat.multiply(qz);
 
 		m4.quaternion.copy(gunQuat);
-		// m4.setRotationFromQuaternion(gunQuat);
 	});
 
 	let barrelStart: Vector3 = new Vector3();
@@ -83,10 +80,8 @@
 			coneOuterAngle: 360,
 			coneOuterGain: 1
 		});
-		// recoil.x = (Math.random() - 0.5) * 0.03;
-		// recoil.y = 0.01;
 
-		recoil.set(
+		gunData.recoil.set(
 			{ x: (Math.random() - 0.5) * 0.0012, y: 0.0001 + Math.random() * 0.0005 },
 			{
 				duration: 1
@@ -96,7 +91,7 @@
 
 	$: {
 		if (!shooting) {
-			recoil.set(
+			gunData.recoil.set(
 				{ x: 0, y: 0 },
 				{
 					duration: 0

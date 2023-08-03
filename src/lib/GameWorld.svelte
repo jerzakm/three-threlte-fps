@@ -11,6 +11,7 @@
 	import { Sheet, SheetObject } from '@threlte/theatre';
 	import { debugStores } from './debug/debugStores';
 	import DebugGame from './debug/DebugGame.svelte';
+	import GunSystem from './gun/GunSystem.svelte';
 
 	const { activeCamera } = rendererStores;
 
@@ -42,6 +43,7 @@
 <World>
 	<GameSystems>
 		<Player />
+		<GunSystem />
 		<AutoColliders>
 			<T.Mesh>
 				<T.BoxGeometry args={[100, 0.05, 100]} />

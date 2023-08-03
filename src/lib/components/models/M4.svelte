@@ -91,8 +91,6 @@ Title: M4A1 With Hands And Animations
 
 	const component = forwardEventHandlers();
 
-	let scale = 0.01;
-
 	const cg = new THREE.SphereGeometry(0.5, 5, 5);
 	const cm = new THREE.MeshBasicMaterial({ color: 'red', wireframe: false });
 
@@ -113,7 +111,6 @@ Title: M4A1 With Hands And Animations
 	$: {
 		if (gunRef && x2Ref && !initialized) {
 			const bone = gunRef.skeleton.getBoneByName('tag_weapon_04');
-			const eo = gunRef.skeleton.getBoneByName('tag_ads_02');
 
 			bStartMesh.position.x = 25;
 			bStartMesh.position.z = 2.6;
@@ -129,9 +126,8 @@ Title: M4A1 With Hands And Animations
 			bone.add(bEndMarker);
 			bone.add(sStartMarker);
 			bone.add(sEndMarker);
-			initialized = true;
-
 			bone.add(holoGroup);
+			initialized = true;
 		}
 	}
 
@@ -336,7 +332,7 @@ Title: M4A1 With Hands And Animations
 				<T.Group
 					name="ab25487b58b043d09a956bcac5cbf842fbx"
 					rotation={[Math.PI / 2, 0, 0]}
-					{scale}
+					scale={0.01}
 					frustumCulled={false}
 				>
 					<T.Group name="Object_2" frustumCulled={false}>
