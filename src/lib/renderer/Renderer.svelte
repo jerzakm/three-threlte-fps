@@ -45,7 +45,8 @@
 		// 	renderer?.render(scene, $eyesCamera);
 		// }
 		if ($gunObject3D) {
-			$gunObject3D?.scale.set(0, 0, 0);
+			const gun = $gunObject3D;
+			gun.visible = false;
 		}
 
 		if ($sightsRenderTarget && $sightsCamera) {
@@ -57,7 +58,8 @@
 
 		renderer?.setRenderTarget(null);
 		if ($gunObject3D) {
-			$gunObject3D?.scale.set(1, 1, 1);
+			const gun = $gunObject3D;
+			gun.visible = true;
 		}
 
 		if ($activeCamera == 'eyes' && $sightsCamera) {
