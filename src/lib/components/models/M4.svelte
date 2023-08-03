@@ -30,7 +30,7 @@ Title: M4A1 With Hands And Animations
 	import fs from '$lib/shaders/x2_f.glsl?raw';
 	import vs from '$lib/shaders/scope_v.glsl?raw';
 	import { DoubleSide } from 'three';
-	import CustomShaderMaterial from 'three-custom-shader-material/vanilla';
+	import { onMount } from 'svelte';
 
 	type $$Props = Props<THREE.Group> & {
 		startPosition: THREE.Vector3;
@@ -286,12 +286,19 @@ Title: M4A1 With Hands And Animations
 	// 	side: THREE.DoubleSide
 	// });
 
-	let x2material: CustomShaderMaterial<typeof THREE.MeshStandardMaterial>;
+	let x2material: any;
 
 	const x2reticle = useTexture('/sprites/eotechHolo.png');
 
+	let CustomShaderMaterial: any;
+
+	onMount(async () => {
+		const d = await import('three-custom-shader-material/vanilla');
+		CustomShaderMaterial = d.default;
+	});
+
 	$: {
-		if ($sightsRenderTarget && $x2reticle) {
+		if ($sightsRenderTarget && $x2reticle && CustomShaderMaterial) {
 			// x2material.needsUpdate = true;
 			x2material = new CustomShaderMaterial({
 				baseMaterial: THREE.MeshBasicMaterial,

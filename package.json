@@ -43,6 +43,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@sveltejs/adapter-static": "^2.0.3",
 		"@types/howler": "^2.2.7",
 		"howler": "^2.2.3",
 		"i": "^0.3.7",
