@@ -1,5 +1,3 @@
-uniform vec3 colorA;
-uniform vec3 colorB;
 varying vec3 vUv;
 
 vec3 paintCircle(vec2 uv, vec2 center, float rad, float width) {

@@ -25,6 +25,12 @@ Title: M4A1 With Hands And Animations
 	import { DEG2RAD } from 'three/src/math/MathUtils';
 	import { draw } from 'svelte/transition';
 	import { useKeyboardControls } from 'svelte-kbc';
+	import { gunStores } from '$lib/gun/gunStores';
+
+	import fs from '$lib/shaders/x2_f.glsl?raw';
+	import vs from '$lib/shaders/scope_v.glsl?raw';
+	import { DoubleSide } from 'three';
+	import CustomShaderMaterial from 'three-custom-shader-material/vanilla';
 
 	type $$Props = Props<THREE.Group> & {
 		startPosition: THREE.Vector3;
@@ -92,7 +98,7 @@ Title: M4A1 With Hands And Animations
 
 	let scale = 0.01;
 
-	const cg = new THREE.SphereGeometry(0.02, 5, 5);
+	const cg = new THREE.SphereGeometry(0.5, 5, 5);
 	const cm = new THREE.MeshBasicMaterial({ color: 'red', wireframe: false });
 
 	const bStartMesh = new THREE.Mesh(cg, cm);
@@ -106,11 +112,13 @@ Title: M4A1 With Hands And Animations
 	sStartMarker.visible = false;
 
 	let gunRef: any;
+	let x2Ref: any;
 
 	let initialized = false;
 	$: {
-		if (gunRef && !initialized) {
+		if (gunRef && x2Ref && !initialized) {
 			const bone = gunRef.skeleton.getBoneByName('tag_weapon_04');
+			const eo = gunRef.skeleton.getBoneByName('tag_ads_02');
 
 			bStartMesh.position.x = 25;
 			bStartMesh.position.z = 2.6;
@@ -134,20 +142,31 @@ Title: M4A1 With Hands And Animations
 
 	const { scopeToggle, reload } = useKeyboardControls();
 
-	let x2 = false;
+	let x2 = true;
 	let silencer = false;
 	let gunDrawn = true;
-	$: console.log({ x2, reloading, swappingScope, shooting, gunDrawn });
+
+	// $: console.log({ x2, reloading, swappingScope, shooting, gunDrawn });
 
 	$: shootAnimation(shooting);
 
 	const shootAnimation = (shooting: boolean) => {
 		if (shooting) {
-			$actions['h2_skeleton|fire11']?.reset();
-			$actions['h2_skeleton|fire11']?.setLoop(THREE.LoopRepeat, 1).setEffectiveTimeScale(1).play();
-			setTimeout(() => {
-				console.log($sightsPosition);
-			}, 5);
+			if (x2) {
+				$actions['h2_skeleton|fire1']?.reset();
+				$actions['h2_skeleton|fire1']
+					?.setLoop(THREE.LoopRepeat, 1)
+					.setEffectiveWeight(0.75)
+					.setEffectiveTimeScale(0.9)
+					.play();
+			} else {
+				$actions['h2_skeleton|fire33']?.reset();
+				$actions['h2_skeleton|fire33']
+					?.setLoop(THREE.LoopRepeat, 1)
+					.setEffectiveWeight(0.75)
+					.setEffectiveTimeScale(0.9)
+					.play();
+			}
 		} else {
 			$actions['h2_skeleton|idle2']?.play();
 		}
@@ -161,7 +180,12 @@ Title: M4A1 With Hands And Animations
 		reload: $actions['h2_skeleton|reload'],
 		reload2: $actions['h2_skeleton|reload2'],
 		draw: $actions['h2_skeleton|draw'],
-		draw2: $actions['h2_skeleton|draw2']
+		draw2: $actions['h2_skeleton|draw2'],
+		fire1: $actions['h2_skeleton|fire1'],
+		fire11: $actions['h2_skeleton|fire11'],
+		fire2: $actions['h2_skeleton|fire2'],
+		fire3: $actions['h2_skeleton|fire3'],
+		fire33: $actions['h2_skeleton|fire33']
 	};
 
 	const playAnim = (
@@ -252,7 +276,93 @@ Title: M4A1 With Hands And Animations
 
 	const sightsRotationHelper = new THREE.Mesh();
 
+	// const x2material = new THREE.MeshBasicMaterial({
+	// 	color: 'white'
+	// });
+
+	// const x2material = new THREE.ShaderMaterial({
+	// 	fragmentShader: fs,
+	// 	vertexShader: vs,
+	// 	side: THREE.DoubleSide
+	// });
+
+	let x2material: CustomShaderMaterial<typeof THREE.MeshStandardMaterial>;
+
+	const x2reticle = useTexture('/sprites/eotechHolo.png');
+
+	$: {
+		if ($sightsRenderTarget && $x2reticle) {
+			// x2material.needsUpdate = true;
+			x2material = new CustomShaderMaterial({
+				baseMaterial: THREE.MeshBasicMaterial,
+				map: $sightsRenderTarget.texture,
+
+				uniforms: {
+					sight: { value: $x2reticle },
+					scene: { value: $sightsRenderTarget.texture }
+				},
+				vertexShader: `
+        varying vec2 custom_vUv;
+
+        void main() {
+          custom_vUv = uv;
+        }
+    `,
+				fragmentShader: `
+
+        varying vec2 custom_vUv;
+        uniform sampler2D sight;
+        uniform sampler2D scene;
+
+        vec2 computeUV( vec2 uv, float k, float kcube ){
+    
+          vec2 t = uv - .5;
+          float r2 = t.x * t.x + t.y * t.y;
+          float f = 0.;
+          
+          if( kcube == 0.0){
+              f = 1. + r2 * k;
+          }else{
+              f = 1. + r2 * ( k + kcube * sqrt( r2 ) );
+          }
+          
+          vec2 nUv = f * t + .5;
+        
+      
+          return nUv;
+          
+        }
+
+        void main() {
+          vec4 original = csm_DiffuseColor;
+
+          vec2 rUv = custom_vUv * 3.;
+          vec4 reticle = texture2D(sight, vec2(rUv.x -1., 2.-rUv.y))*2.;
+
+          vec2 sUv = custom_vUv;
+          vec4 s = texture2D(scene, sUv);
+
+          float k = -0.4 ;
+          float kcube = 1.4;    
+          float offset = .12;
+
+
+          float red = texture2D( scene, computeUV( sUv, k + offset, kcube ) ).r*1.4; 
+          float green = texture2D( scene, computeUV( sUv, k, kcube ) ).g*1.4; 
+          float blue = texture2D( scene, computeUV( sUv, k - offset, kcube ) ).b*1.4; 
+
+          vec4 cubed = vec4(red,green,blue, 1.);
+                    
+          csm_DiffuseColor = cubed;
+          csm_DiffuseColor.r = mix(cubed.r, reticle.r, reticle.a);
+        }
+    `
+			});
+		}
+	}
+
 	useFrame(({ clock }) => {
+		// x2material.needsUpdate = true;
 		bStartMesh.getWorldPosition(startPosition);
 		bEndMarker.getWorldPosition(endPosition);
 		sStartMarker.getWorldPosition(sightsStart);
@@ -267,27 +377,36 @@ Title: M4A1 With Hands And Animations
 
 	let aimOffsetX = 3;
 	let aimOffsetY = 0.38;
-
 	let aimOffsetZ = -5;
 
-	const { activeCamera } = rendererStores;
+	window.addEventListener('wheel', (e) => {
+		aimOffsetZ += e.deltaY * 0.003;
+		aimOffsetZ = Math.max(aimOffsetZ, -7);
+		aimOffsetZ = Math.min(aimOffsetZ, 5);
+	});
+
+	const { activeCamera, sightsRenderTarget } = rendererStores;
 	const cameraSwapTween = tweened(0);
 
 	$: {
 		if ($activeCamera === 'eyes') {
 			cameraSwapTween.set(0, {
 				easing: quadInOut,
-				duration: 0
+				duration: 200
 			});
 		}
 
 		if ($activeCamera === 'sights') {
 			cameraSwapTween.set(1, {
 				easing: quadInOut,
-				duration: 0
+				duration: 300
 			});
 		}
 	}
+
+	const { gunObject3D } = gunStores;
+
+	gunObject3D.set(ref);
 </script>
 
 <T is={ref} dispose={false} {...$$restProps} bind:this={$component}>
@@ -363,6 +482,11 @@ Title: M4A1 With Hands And Animations
 											<T.MeshBasicMaterial side={THREE.DoubleSide} color={'#ef4400'} />
 										</T.Mesh>
 
+										<!-- <T.Mesh rotation.z={DEG2RAD * 90} position.x={40} material={x2material}>
+											<T.PlaneGeometry args={[20, 20]} />
+										</T.Mesh> -->
+										<!-- <T.MeshBasicMaterial color="red" side={DoubleSide} /> -->
+
 										<T.Mesh>
 											<T.SphereGeometry args={[0.06]} />
 											<T.MeshBasicMaterial side={THREE.DoubleSide} color={'#ef4400'} />
@@ -405,11 +529,12 @@ Title: M4A1 With Hands And Animations
 										material={gltf.materials.magnifier_col}
 										skeleton={gltf.nodes.Object_17.skeleton}
 										frustumCulled={false}
+										bind:ref={x2Ref}
 									/>
 									<T.SkinnedMesh
 										name="viewer_2x"
 										geometry={gltf.nodes.Object_18.geometry}
-										material={gltf.materials.lens_col}
+										material={x2material}
 										skeleton={gltf.nodes.Object_18.skeleton}
 										frustumCulled={false}
 									/>
@@ -439,7 +564,7 @@ Title: M4A1 With Hands And Animations
 										name="Silencer"
 										geometry={gltf.nodes.Object_22.geometry}
 										material={gltf.materials.suppressor_col}
-										skeleton={gltf.nodes.Object_22.skeleton}
+										skeleton={gltf.nodes.Object_2`2.skeleton}
 										frustumCulled={false}
 									/> -->
 								</T.Group>

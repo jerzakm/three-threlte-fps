@@ -12,6 +12,7 @@
 	const { eyesCamera, activeCamera } = rendererStores;
 
 	let m4: Group;
+	export let recoil = tweened({ x: 0, y: 0 });
 
 	//https://www.youtube.com/watch?v=zc_8QMltpnU&ab_channel=Ish%27sTacticalSolutions
 	// https://www.youtube.com/watch?v=DuS9XnY-IRA&ab_channel=ColionNoir
@@ -82,7 +83,27 @@
 			coneOuterAngle: 360,
 			coneOuterGain: 1
 		});
+		// recoil.x = (Math.random() - 0.5) * 0.03;
+		// recoil.y = 0.01;
+
+		recoil.set(
+			{ x: (Math.random() - 0.5) * 0.0012, y: 0.0001 + Math.random() * 0.0005 },
+			{
+				duration: 1
+			}
+		);
 	};
+
+	$: {
+		if (!shooting) {
+			recoil.set(
+				{ x: 0, y: 0 },
+				{
+					duration: 0
+				}
+			);
+		}
+	}
 
 	const mouseDown = (e: MouseEvent) => {
 		if (e.button === 0) {
@@ -108,7 +129,6 @@
 			$activeCamera === 'eyes' ? activeCamera.set('sights') : activeCamera.set('eyes');
 		}
 	};
-
 	let lastShot = 0;
 
 	const shotDelay = 60 / 700;

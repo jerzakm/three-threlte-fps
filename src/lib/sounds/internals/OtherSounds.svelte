@@ -5,7 +5,7 @@
 
 	import type * as THREE from 'three';
 
-	let audioSources = new Array<THREE.PositionalAudio>(10);
+	let audioSources = new Array<THREE.PositionalAudio>(4);
 
 	let shotIndex = 0;
 

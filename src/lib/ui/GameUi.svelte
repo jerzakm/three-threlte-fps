@@ -28,7 +28,10 @@
 			{#each { length: 30 } as a, x}
 				<!-- <img src="/ui/ammoOutlined.svg" class="h-16 -mx-6" alt="bullet" /> -->
 			{/each}
-			<span class="ammoCount text-4xl">{$bulletCount.current}/{$bulletCount.max}</span>
+			<!-- <span class="ammoCount text-4xl">{$bulletCount.current}/{$bulletCount.max}</span> -->
+			<span class="ammoCount text-2xl"
+				>Right click - Ads | T - scope swap | R - reload | Mousewheel - scope adjustment</span
+			>
 		</div>
 	</div>
 </div>

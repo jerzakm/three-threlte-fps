@@ -21,6 +21,8 @@
 		return Math.max(min, Math.min(number, max));
 	}
 
+	let recoil: any;
+
 	let playerCollider: RCollider;
 	let playerBody: RRigidBody;
 
@@ -63,8 +65,10 @@
 
 	useFrame(({ clock }) => {
 		if (!$eyesCamera) return;
-		phi += mouseMove.x * mouseSensitivity;
-		theta = clamp(theta - mouseMove.y * mouseSensitivity, -Math.PI / 3, Math.PI / 3);
+		if (!recoil) return;
+
+		phi += mouseMove.x * mouseSensitivity + $recoil.x;
+		theta = clamp(theta - mouseMove.y * mouseSensitivity + $recoil.y, -Math.PI / 3, Math.PI / 3);
 		gunphi = phi * 1;
 		guntheta = theta * 1;
 		const qx = new Quaternion();
@@ -135,7 +139,7 @@
 
 		$eyesCamera.position.set(translation.x, translation.y + 1.9, translation.z);
 
-		$sightsPosition2.copy($eyesCamera.position);
+		// $sightsPosition2.copy($eyesCamera.position);
 		$eyesPosition.copy($eyesCamera.position);
 	});
 </script>
@@ -150,4 +154,4 @@
 	</RigidBody>
 </T.Group>
 
-<Gun phi={gunphi} theta={guntheta} />
+<Gun phi={gunphi} theta={guntheta} bind:recoil />
