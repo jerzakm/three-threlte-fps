@@ -391,12 +391,6 @@ Title: M4A1 With Hands And Animations
 											<T.TorusGeometry args={[0.72, 0.04, 10, 30]} />
 											<T.MeshBasicMaterial side={THREE.DoubleSide} color={'#ef4400'} />
 										</T.Mesh>
-
-										<!-- <T.Mesh rotation.z={DEG2RAD * 90} position.x={40} material={x2material}>
-											<T.PlaneGeometry args={[20, 20]} />
-										</T.Mesh> -->
-										<!-- <T.MeshBasicMaterial color="red" side={DoubleSide} /> -->
-
 										<T.Mesh>
 											<T.SphereGeometry args={[0.06]} />
 											<T.MeshBasicMaterial side={THREE.DoubleSide} color={'#ef4400'} />
@@ -418,11 +412,9 @@ Title: M4A1 With Hands And Animations
 											<T.MeshBasicMaterial side={THREE.DoubleSide} color={'#ef4400'} />
 										</T.Mesh>
 									</T.Group>
-
 									<!-- <T.SkinnedMesh
 										name="viewer_holo"
 										geometry={gltf.nodes.Object_15.geometry}
-										material={eotechHoloSights}
 										skeleton={gltf.nodes.Object_15.skeleton}
 										frustumCulled={false}
 									/> -->
@@ -447,7 +439,6 @@ Title: M4A1 With Hands And Animations
 										skeleton={gltf.nodes.Object_18.skeleton}
 										frustumCulled={false}
 									>
-										<T.MeshBasicMaterial color="yellow" />
 										<ScopeShaderMaterial />
 									</T.SkinnedMesh>
 									<T.SkinnedMesh
