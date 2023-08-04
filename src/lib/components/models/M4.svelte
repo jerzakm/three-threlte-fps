@@ -147,14 +147,14 @@ Title: M4A1 With Hands And Animations
 				$actions['h2_skeleton|fire1']?.reset();
 				$actions['h2_skeleton|fire1']
 					?.setLoop(THREE.LoopRepeat, 1)
-					.setEffectiveWeight(0.75)
+					.setEffectiveWeight(0.5)
 					.setEffectiveTimeScale(0.9)
 					.play();
 			} else {
 				$actions['h2_skeleton|fire33']?.reset();
 				$actions['h2_skeleton|fire33']
 					?.setLoop(THREE.LoopRepeat, 1)
-					.setEffectiveWeight(0.75)
+					.setEffectiveWeight(0.5)
 					.setEffectiveTimeScale(0.9)
 					.play();
 			}
