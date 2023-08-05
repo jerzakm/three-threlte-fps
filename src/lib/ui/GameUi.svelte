@@ -29,9 +29,14 @@
 				<!-- <img src="/ui/ammoOutlined.svg" class="h-16 -mx-6" alt="bullet" /> -->
 			{/each}
 			<!-- <span class="ammoCount text-4xl">{$bulletCount.current}/{$bulletCount.max}</span> -->
-			<span class="ammoCount text-2xl"
-				>Right click - Ads | T - scope swap | R - reload | Mousewheel - scope adjustment</span
-			>
+			<ul class="ammoCount text-lg flex gap-10">
+				<li class="text-yellow-400">LMB - shoot</li>
+				<li class="text-yellow-400">RMB - Ads</li>
+				<li class="text-yellow-400">R - reload</li>
+				<li class="text-yellow-400">T - scope swap</li>
+				<li class="text-yellow-400">Mousewheel - scope adjustment</li>
+				<li class="text-green-400">Y - debug</li>
+			</ul>
 		</div>
 	</div>
 </div>
