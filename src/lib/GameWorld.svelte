@@ -27,13 +27,13 @@
 <Environment files={'spaichingen_hill_1k.hdr'} />
 
 <Grid
-	position.y={0.09}
+	position.y={0.11}
 	cellColor="#ffaa00"
 	sectionColor="#000000"
 	sectionThickness={0}
-	fadeDistance={20}
 	cellSize={1}
 	gridSize={[200, 200]}
+	frustumCulled={false}
 />
 
 <T.AmbientLight intensity={0.4} />
@@ -68,7 +68,6 @@
 				</AutoColliders>
 			{/each}
 		{/each}
-
 		<DebugGame />
 	</GameSystems>
 </World>

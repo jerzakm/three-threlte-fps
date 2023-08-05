@@ -9,11 +9,9 @@
 
 	let eyesCamera: PerspectiveCamera | undefined = undefined;
 	let sightsCamera: PerspectiveCamera | undefined = undefined;
-	let debugCamera: PerspectiveCamera | undefined = undefined;
 
 	$: eyesCamera ? rendererStores.eyesCamera.set(eyesCamera) : '';
 	$: sightsCamera ? rendererStores.sightsCamera.set(sightsCamera) : '';
-	$: debugCamera ? rendererStores.debugCamera.set(debugCamera) : '';
 
 	const { activeCamera } = rendererStores;
 	const { eyesPosition, eyesQuat, sightsQuat } = cameraStores;
@@ -51,9 +49,9 @@
 			// currentQuat.slerp($eyesQuat, $cameraSwapTween);
 		}
 
-		if ($activeCamera === 'debug') {
-			debugCamera?.lookAt($eyesPosition);
-		}
+		// if ($activeCamera === 'debug') {
+		// 	rendererStores.debugCamera?.lookAt($eyesPosition);
+		// }
 
 		sightsCamera?.position.copy(currentCameraPosition);
 		sightsCamera?.quaternion.copy(currentQuat);
@@ -68,4 +66,3 @@
 <T.PerspectiveCamera fov={60} near={0.0001} bind:ref={sightsCamera} let:ref>
 	<!-- <T.CameraHelper args={[ref]} /> -->
 </T.PerspectiveCamera>
-<T.PerspectiveCamera fov={60} near={0.0001} bind:ref={debugCamera} position={[-2, 3, -2]} />

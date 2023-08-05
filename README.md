@@ -12,12 +12,10 @@
 - reload/scope toggle animations
 
 https://github.com/jerzakm/three-threlte-fps/assets/16734228/bd802ee1-a9db-413b-8e4b-1534999a6464
-
 https://github.com/jerzakm/three-threlte-fps/assets/16734228/4121eaab-3d23-4610-b292-b6f3016e59f7
 
-
-
 ## Currently working on:
+- shooting range/practice level for debug
 - animation system for drawing weapon, reloading, toggling between 1x and 2x sights
 - muzzle flash coming from the gun barrel
 
