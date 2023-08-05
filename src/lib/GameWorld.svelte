@@ -1,41 +1,19 @@
 <script lang="ts">
 	import { T } from '@threlte/core';
-	import { Environment, Grid } from '@threlte/extras';
+	import { Environment } from '@threlte/extras';
 
 	import Player from '$lib/player/Player.svelte';
-	import { AutoColliders, Debug, World } from '@threlte/rapier';
-	import { AmbientLight, DoubleSide, HemisphereLight } from 'three';
+	import { AutoColliders, World } from '@threlte/rapier';
 	import { onMount } from 'svelte';
-	import { rendererStores } from './renderer/rendererStores';
-	import GameSystems from './GameSystems.svelte';
-	import { Sheet, SheetObject } from '@threlte/theatre';
-	import { debugStores } from './debug/debugStores';
-	import DebugGame from './debug/DebugGame.svelte';
-	import GunSystem from './gun/GunSystem.svelte';
 	import { DEG2RAD } from 'three/src/math/MathUtils';
-
-	const { activeCamera } = rendererStores;
-
-	const { debugActive } = debugStores;
-
-	onMount(() => {
-		// activeCamera.set('debug');
-		// activeCamera.set('eyes');
-		// activeCamera.set('sights');
-	});
+	import GameSystems from './GameSystems.svelte';
+	import DebugGame from './debug/DebugGame.svelte';
+	import { debugStores } from './debug/debugStores';
+	import GunSystem from './gun/GunSystem.svelte';
+	import { rendererStores } from './renderer/rendererStores';
 </script>
 
 <Environment files={'spaichingen_hill_1k.hdr'} />
-
-<!-- <Grid
-	position.y={0.11}
-	cellColor="#ffaa00"
-	sectionColor="#000000"
-	sectionThickness={0}
-	cellSize={1}
-	gridSize={[200, 200]}
-	frustumCulled={false}
-/> -->
 
 <T.AmbientLight intensity={0.4} />
 
@@ -46,9 +24,9 @@
 		<Player />
 		<GunSystem />
 		<AutoColliders>
-			<T.Mesh rotation.x={DEG2RAD * 90}>
+			<T.Mesh rotation.x={-DEG2RAD * 90}>
 				<T.PlaneGeometry args={[1000, 1000]} />
-				<T.MeshStandardMaterial color="#121212" side={DoubleSide} />
+				<T.MeshStandardMaterial color="#121212" />
 			</T.Mesh>
 		</AutoColliders>
 

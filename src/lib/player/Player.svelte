@@ -9,15 +9,14 @@
 	import { rendererStores } from '$lib/renderer/rendererStores';
 	import { cameraStores } from '$lib/renderer/cameraStores';
 	import { playerStores } from './playerStores';
-	import { gunStores } from '$lib/gun/gunStores';
 	import { useSystem } from '$lib/systems/_systems';
-	import { writable } from 'svelte/store';
 	import { useGameData } from '$lib/systems/_gameData';
 
 	const { playerPosition } = playerStores;
 
-	const { gunSystem } = useSystem();
-	const { recoil } = useGameData().gunData;
+	const { gunSystem, controlsSystem } = useSystem();
+	const { controlsData, gunData } = useGameData();
+	const { recoil } = gunData;
 
 	const { left, right, forward, back, run } = useKeyboardControls();
 
@@ -47,17 +46,7 @@
 		}
 	}
 
-	const mouseMove = {
-		x: 0,
-		y: 0
-	};
-
 	const mouseSensitivity = 0.0012;
-
-	window.addEventListener('mousemove', (e) => {
-		mouseMove.x += e.movementX;
-		mouseMove.y += e.movementY;
-	});
 
 	let phi = 0;
 	let theta = 0;
@@ -72,8 +61,12 @@
 		if (!$eyesCamera) return;
 		if (!recoil) return;
 
-		phi += mouseMove.x * mouseSensitivity + $recoil.x;
-		theta = clamp(theta - mouseMove.y * mouseSensitivity + $recoil.y, -Math.PI / 3, Math.PI / 3);
+		phi += controlsData.mouse.moveX * mouseSensitivity + $recoil.x;
+		theta = clamp(
+			theta - controlsData.mouse.moveY * mouseSensitivity + $recoil.y,
+			-Math.PI / 3,
+			Math.PI / 3
+		);
 		gunSystem.setGunOrientation(theta, phi);
 		const qx = new Quaternion();
 		qx.setFromAxisAngle(new Vector3(0, -1, 0), phi);
@@ -85,8 +78,7 @@
 		cameraQuaternion.multiply(qx);
 		cameraQuaternion.multiply(qz);
 
-		mouseMove.x = 0;
-		mouseMove.y = 0;
+		controlsSystem.clearMouseMove();
 
 		$eyesCamera.quaternion.copy(cameraQuaternion);
 		$eyesQuat.copy(cameraQuaternion);

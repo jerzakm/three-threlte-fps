@@ -9,13 +9,15 @@
 	import type { GameSystems } from './systems/_systems';
 	import { initGunSystem } from './systems/gunSystem';
 	import ControlsSystem from '$lib/controls/ControlsSystem.svelte';
+	import { initControlsSystem } from './systems/controlsSystem';
 
 	setContext('game-data-ctx', gameData);
 
 	const systems: GameSystems = {
 		bulletSystem: initBulletSystem(),
 		soundSystem: initSoundSystem(),
-		gunSystem: initGunSystem()
+		gunSystem: initGunSystem(),
+		controlsSystem: initControlsSystem()
 	};
 
 	setContext<GameSystems>('game-systems-ctx', systems);
@@ -24,6 +26,8 @@
 		systems.bulletSystem.update();
 		systems.bulletSystem.cleanup();
 		systems.soundSystem.update();
+		systems.gunSystem.update();
+		systems.controlsSystem.update();
 	});
 </script>
 

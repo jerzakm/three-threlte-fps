@@ -26,10 +26,19 @@ const gunData = {
 	},
 	recoil: tweened({ x: 0, y: 0 })
 };
+
+const controlsData = {
+	mouse: {
+		moveX: 0,
+		moveY: 0
+	}
+};
+
 export const gameData = {
 	bulletData,
 	soundData,
-	gunData
+	gunData,
+	controlsData
 };
 
 export type GameData = typeof gameData;

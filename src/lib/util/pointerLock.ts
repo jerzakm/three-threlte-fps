@@ -16,7 +16,7 @@ export const requestPointerLockWithUnadjustedMovement = (myTargetElement: HTMLEl
 	return (
 		promise
 			//@ts-ignore
-			.then(() => console.log('pointer is locked'))
+			.then()
 			//@ts-ignore
 			.catch((error) => {
 				if (error.name === 'NotSupportedError') {

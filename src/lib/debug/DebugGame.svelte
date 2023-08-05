@@ -6,6 +6,7 @@
 	import { cameraStores } from '$lib/renderer/cameraStores';
 	import { rendererStores } from '$lib/renderer/rendererStores';
 	import DebugCamera from './_DebugCamera.svelte';
+	import DebugControls from './_DebugControls.svelte';
 
 	const cs = cameraStores;
 	const { activeCamera } = rendererStores;
@@ -22,8 +23,6 @@
 	$: $debugActive && debugCamera ? activeCamera.set('debug') : activeCamera.set('eyes');
 
 	$: $debugToggle ? debugActive.set(!$debugActive) : '';
-
-	$: console.log($debugActive);
 </script>
 
 <Studio hide={!$debugActive} />
@@ -40,6 +39,17 @@
 	<Declare props={{ active: false }} let:values>
 		{#if values.active && $debugActive}
 			<DebugCamera />
+		{/if}
+	</Declare>
+</SheetObject>
+
+<SheetObject key="debugControls" let:Declare>
+	<Declare props={{ allowPointerLock: false, allowMouseAim: true }} let:values>
+		{#if $debugActive}
+			<DebugControls
+				allowPointerLock={values.allowPointerLock}
+				allowMouseAim={values.allowMouseAim}
+			/>
 		{/if}
 	</Declare>
 </SheetObject>
