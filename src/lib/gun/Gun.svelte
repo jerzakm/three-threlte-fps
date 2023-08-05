@@ -10,6 +10,7 @@
 	import { useGameData } from '$lib/systems/_gameData';
 	import { controlStores } from '$lib/controls/controlStores';
 	import { gunStores } from './gunStores';
+	import MuzzleFlash from './MuzzleFlash.svelte';
 
 	const { eyesCamera, activeCamera } = rendererStores;
 	const { shotPulse } = gunStores;
@@ -156,17 +157,4 @@
 		shooting={$shotPulse}
 	/>
 </T.Group>
-
-<T.PointLight
-	intensity={$flashIntensity}
-	distance={80}
-	position={[barrelStart.x, barrelStart.y, barrelStart.z]}
-	color={'#aa6622'}
-/>
-
-<T.PointLight
-	intensity={$flashIntensity * 0.2}
-	distance={1}
-	position={[barrelStart.x, barrelStart.y + 0.5, barrelStart.z]}
-	color={'#aacc22'}
-/>
+<MuzzleFlash />
