@@ -8,6 +8,7 @@
 	import BulletSystem from '$lib/gun/BulletSystem.svelte';
 	import type { GameSystems } from './systems/_systems';
 	import { initGunSystem } from './systems/gunSystem';
+	import ControlsSystem from '$lib/controls/ControlsSystem.svelte';
 
 	setContext('game-data-ctx', gameData);
 
@@ -28,4 +29,5 @@
 
 <SoundSystem />
 <BulletSystem />
+<ControlsSystem />
 <slot />

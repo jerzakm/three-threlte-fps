@@ -7,16 +7,13 @@
 	import { cameraStores } from './cameraStores';
 	import { gunStores } from '$lib/gun/gunStores';
 
-	let pointerLocked = false;
 	const { activeCamera, debugCamera, sightsCamera, sightsRenderTarget } = rendererStores;
 	const { sightsPosition, sightsQuat } = cameraStores;
 	const { renderer } = useThrelte();
-	renderer?.domElement.addEventListener('click', async () => {
-		if (!pointerLocked) {
-			requestPointerLockWithUnadjustedMovement(renderer?.domElement);
-		}
-		// const y = renderer?.domElement.requestPointerLock();
-	});
+
+	const x2camera = new PerspectiveCamera(5);
+
+	const { gunObject3D } = gunStores;
 
 	$: {
 		if (!$sightsRenderTarget) {
@@ -25,18 +22,6 @@
 			);
 		}
 	}
-
-	document.addEventListener(
-		'pointerlockchange',
-		(e) => {
-			pointerLocked = !pointerLocked;
-		},
-		false
-	);
-
-	const x2camera = new PerspectiveCamera(5);
-
-	const { gunObject3D } = gunStores;
 
 	useRender(({ scene, renderer }) => {
 		//
