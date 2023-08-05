@@ -12,6 +12,7 @@
 	import { debugStores } from './debug/debugStores';
 	import DebugGame from './debug/DebugGame.svelte';
 	import GunSystem from './gun/GunSystem.svelte';
+	import { DEG2RAD } from 'three/src/math/MathUtils';
 
 	const { activeCamera } = rendererStores;
 
@@ -26,7 +27,7 @@
 
 <Environment files={'spaichingen_hill_1k.hdr'} />
 
-<Grid
+<!-- <Grid
 	position.y={0.11}
 	cellColor="#ffaa00"
 	sectionColor="#000000"
@@ -34,7 +35,7 @@
 	cellSize={1}
 	gridSize={[200, 200]}
 	frustumCulled={false}
-/>
+/> -->
 
 <T.AmbientLight intensity={0.4} />
 
@@ -45,9 +46,9 @@
 		<Player />
 		<GunSystem />
 		<AutoColliders>
-			<T.Mesh>
-				<T.BoxGeometry args={[100, 0.05, 100]} />
-				<T.MeshStandardMaterial color="#121212" />
+			<T.Mesh rotation.x={DEG2RAD * 90}>
+				<T.PlaneGeometry args={[1000, 1000]} />
+				<T.MeshStandardMaterial color="#121212" side={DoubleSide} />
 			</T.Mesh>
 		</AutoColliders>
 
