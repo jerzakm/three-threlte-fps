@@ -4,13 +4,10 @@
 
 	import Player from '$lib/player/Player.svelte';
 	import { AutoColliders, World } from '@threlte/rapier';
-	import { onMount } from 'svelte';
 	import { DEG2RAD } from 'three/src/math/MathUtils';
 	import GameSystems from './GameSystems.svelte';
 	import DebugGame from './debug/DebugGame.svelte';
-	import { debugStores } from './debug/debugStores';
 	import GunSystem from './gun/GunSystem.svelte';
-	import { rendererStores } from './renderer/rendererStores';
 </script>
 
 <Environment files={'spaichingen_hill_1k.hdr'} />

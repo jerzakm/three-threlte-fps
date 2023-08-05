@@ -8,8 +8,11 @@
 	import { soundMap } from '$lib/systems/soundSystem';
 	import { tweened } from 'svelte/motion';
 	import { useGameData } from '$lib/systems/_gameData';
+	import { controlStores } from '$lib/controls/controlStores';
+	import { gunStores } from './gunStores';
 
 	const { eyesCamera, activeCamera } = rendererStores;
+	const { shotPulse } = gunStores;
 
 	let m4: Group;
 
@@ -49,18 +52,17 @@
 	let barrelDirection = new Vector3();
 
 	let shooting = false;
-	let shotPulse = false;
 
 	const { bulletSystem, soundSystem } = useSystem();
 
-	const flashIntensity = tweened(0);
+	const { flashIntensity } = gunStores;
 
 	const shoot = () => {
 		barrelDirection.subVectors(barrelStart, barrelEnd).multiplyScalar(1200);
 		flashIntensity.set(2, { duration: 0 });
-		shotPulse = true;
+		gunStores.shotPulse.set(true);
 		setTimeout(() => {
-			flashIntensity.set(0, { duration: 50 });
+			gunStores.flashIntensity.set(0, { duration: 50 });
 		}, 20);
 
 		barrelStart = barrelStart;
@@ -100,6 +102,8 @@
 		}
 	}
 
+	const { allowAds } = controlStores;
+
 	const mouseDown = (e: MouseEvent) => {
 		if (e.button === 0) {
 			if (barrelStart && barrelEnd) {
@@ -108,7 +112,7 @@
 			}
 		}
 
-		if (e.button === 2) {
+		if (e.button === 2 && $allowAds) {
 			$activeCamera === 'eyes' ? activeCamera.set('sights') : activeCamera.set('eyes');
 		}
 	};
@@ -120,7 +124,7 @@
 			}
 		}
 
-		if (e.button === 2) {
+		if (e.button === 2 && $allowAds) {
 			$activeCamera === 'eyes' ? activeCamera.set('sights') : activeCamera.set('eyes');
 		}
 	};
@@ -131,9 +135,11 @@
 	useFrame(({ clock }) => {
 		const time = clock.getElapsedTime();
 		const sinceLastShot = time - lastShot;
-		shotPulse = false;
+		gunStores.shotPulse.set(false);
+		gunStores.barrelStart.set(barrelStart);
+		gunStores.barrelEnd.set(barrelEnd);
 		if (shooting && sinceLastShot > shotDelay) {
-			shotPulse = true;
+			gunStores.shotPulse.set(true);
 			shoot();
 			lastShot = time * 1;
 		}
@@ -147,7 +153,7 @@
 		bind:ref={m4}
 		bind:startPosition={barrelStart}
 		bind:endPosition={barrelEnd}
-		shooting={shotPulse}
+		shooting={$shotPulse}
 	/>
 </T.Group>
 

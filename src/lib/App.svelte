@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { Canvas } from '@threlte/core';
-
 	import GameWorld from '$lib/GameWorld.svelte';
 	import Cameras from '$lib/renderer/Cameras.svelte';
 	import Renderer from '$lib/renderer/Renderer.svelte';

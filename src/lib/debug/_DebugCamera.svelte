@@ -19,13 +19,9 @@
 			previousCamera
 		});
 		activeCamera.set('eyes');
-
-		// this could be used to set to previous camera
-		// atm the player controller sucks and it causes issues of being stuck in wrong ads mode
-		// activeCamera.set(previousCamera);
 	});
 </script>
 
-<T.PerspectiveCamera fov={60} near={0.0001} bind:ref={debugCamera} position={[-2, 3, -2]}>
-	<OrbitControls />
+<T.PerspectiveCamera fov={60} near={0.0001} bind:ref={debugCamera} position={[-1, 2.5, -1.5]}>
+	<OrbitControls target={[0, 2, 0]} autoRotate autoRotateSpeed={0.01} />
 </T.PerspectiveCamera>
