@@ -120,8 +120,8 @@ export const initBulletSystem = () => {
 
 					const userData: any = bullet.body.userData;
 
-					if (userData.impacted !== true) {
-						// TODO RICOCHET???
+					if (userData.impacted !== true && otherCollider.shape.type !== 7) {
+						console.log(otherCollider);
 						const linvel = bullet.body.linvel();
 						bullet.body.setLinvel(
 							{ x: linvel.x * 0.03, y: linvel.y * 0.03, z: linvel.z * 0.03 },
