@@ -72,7 +72,7 @@
 			origin: [barrelStart.x, barrelStart.y, barrelStart.z],
 			target: [barrelEnd.x, barrelEnd.y, barrelEnd.z],
 			velocity: 1200,
-			dropoff: 3
+			dropoff: 2
 		});
 
 		soundSystem.makeSound({

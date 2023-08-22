@@ -8,11 +8,14 @@
 	import GameSystems from './GameSystems.svelte';
 	import DebugGame from './debug/DebugGame.svelte';
 	import GunSystem from './gun/GunSystem.svelte';
+	import Ground from './scene/Ground.svelte';
+	import Sky from './scene/Sky.svelte';
 </script>
 
-<Environment files={'spaichingen_hill_1k.hdr'} />
+<!-- <Environment files={'spaichingen_hill_1k.hdr'} /> -->
+<Environment files={'kloofendal_43d_clear_puresky_2k.hdr'} isBackground />
 
-<T.AmbientLight intensity={0.4} />
+<!-- <T.AmbientLight intensity={0.4} /> -->
 
 <T.HemisphereLight color={'white'} intensity={0.1} />
 
@@ -20,12 +23,6 @@
 	<GameSystems>
 		<Player />
 		<GunSystem />
-		<AutoColliders>
-			<T.Mesh rotation.x={-DEG2RAD * 90}>
-				<T.PlaneGeometry args={[1000, 1000]} />
-				<T.MeshStandardMaterial color="#121212" />
-			</T.Mesh>
-		</AutoColliders>
 
 		<AutoColliders>
 			<T.Mesh position.z={-25} position.y={2}>
@@ -44,6 +41,8 @@
 				</AutoColliders>
 			{/each}
 		{/each}
+		<Sky />
+		<Ground />
 		<DebugGame />
 	</GameSystems>
 </World>

@@ -22,7 +22,7 @@
 		"@threlte/extras": "^5.2.0",
 		"@threlte/rapier": "^1.0.4",
 		"@threlte/theatre": "^2.1.0",
-		"@types/three": "^0.155.0",
+		"@types/three": "^0.152.1",
 		"@typescript-eslint/eslint-plugin": "^6.4.0",
 		"@typescript-eslint/parser": "^6.4.0",
 		"autoprefixer": "^10.4.15",
@@ -48,6 +48,7 @@
 		"howler": "^2.2.3",
 		"i": "^0.3.7",
 		"npm": "^9.8.1",
+		"simplex-noise": "^4.0.1",
 		"svelte-kbc": "^0.1.1",
 		"three-custom-shader-material": "^5.4.0"
 	}
