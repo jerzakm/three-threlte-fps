@@ -6,6 +6,7 @@
 	import { Theatre } from '@threlte/theatre';
 	import { KeyboardControls } from 'svelte-kbc';
 	import GameUi from './ui/GameUi.svelte';
+	import { dev } from '$app/environment';
 
 	const config = [
 		// individual key presses
@@ -34,7 +35,11 @@
 			powerPreference: 'high-performance'
 		}}
 	>
-		<Theatre>
+		<Theatre
+			studio={{
+				hide: !dev
+			}}
+		>
 			<Cameras />
 			<Renderer />
 			<GameWorld />
