@@ -33,7 +33,7 @@
 	const scale = new RAPIER.Vector3(size, 1, size);
 </script>
 
-<T.Group position.y={-5}>
+<!-- <T.Group position.y={-5}>
 	<T.Mesh {geometry} rotation.x={DEG2RAD * -90}>
 		<T.MeshStandardMaterial color="#ffffff" />
 	</T.Mesh>
@@ -41,13 +41,13 @@
 	<RigidBody type={'fixed'}>
 		<Collider shape={'heightfield'} args={[nsubdivs, nsubdivs, heights, scale]} />
 	</RigidBody>
-</T.Group>
+</T.Group> -->
 
-<!-- <T.Group position.y={-3}>
+<T.Group position.y={-3}>
 	<AutoColliders>
 		<T.Mesh rotation.x={-DEG2RAD * 90}>
 			<T.PlaneGeometry args={[1000, 1000]} />
 			<T.MeshStandardMaterial color="#aaaaaa" />
 		</T.Mesh>
 	</AutoColliders>
-</T.Group> -->
+</T.Group>
